@@ -12,8 +12,19 @@ public class Product {
         this.quantity = quantity;
 
         if ("null".equals(promotion)) {
-            promotion = "재고없음";
+            promotion = "미진행";
         }
         this.promotion = promotion;
+    }
+
+    public boolean exist(String name) {
+        return this.name.equals(name);
+    }
+
+    public int getQuantity(String name) {
+        if (this.exist(name)) {
+            return this.quantity;
+        }
+        return 0;
     }
 }
