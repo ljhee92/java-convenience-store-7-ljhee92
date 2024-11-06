@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +27,7 @@ public class InputViewTest extends NsTest {
     void validateFormat() {
         run("[콜라-10],[사이다-3]");
         assertThat(inputView.requestOrder())
-                .isEqualTo(Map.of("콜라", "10", "사이다", "3"));
+                .isEqualTo(List.of(Map.of("콜라", "10", "사이다", "3")));
     }
 
     @ParameterizedTest()
