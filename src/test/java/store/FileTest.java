@@ -18,7 +18,7 @@ public class FileTest {
     void containsContents(String path, String content, String message) {
         FileInputReader fileInputReader = new FileInputReader();
 
-        assertThat(fileInputReader.openFile(path))
+        assertThat(fileInputReader.readFile(path))
                 .contains(content);
     }
 }
