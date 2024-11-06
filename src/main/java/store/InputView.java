@@ -5,26 +5,30 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class InputView extends UserInputReader {
-    public Map<String, String> requestPurchaseProduct() {
-        String inputPurchaseProduct = inputMessage();
+    public List<Map<String, String>> requestOrder() {
+        String inputOrder = inputMessage();
+        validateOrderFormat(inputOrder);
+        return parseOrder(inputOrder);
+    }
 
-        if (inputPurchaseProduct.isBlank()) {
+    private void validateOrderFormat(String inputOrder) {
+        if (inputOrder.isBlank()) {
             throw new IllegalArgumentException();
         }
 
-        if (!inputPurchaseProduct.matches("^(\\[[가-힣]+-[0-9]+])*,*(\\[[가-힣]+-[0-9]+])$")) {
+        if (!inputOrder.matches("^(\\[[가-힣]+-[0-9]+])*,*(\\[[가-힣]+-[0-9]+])$")) {
             throw new IllegalArgumentException();
         }
+    }
 
-        String inputPurchaseProductWithoutSquareBrackets
-                = Parser.removeSquareBrackets(inputPurchaseProduct);
-        List<String> inputPurchaseProducts
-                = Parser.splitByComma(inputPurchaseProductWithoutSquareBrackets);
-
-        return inputPurchaseProducts.stream()
+    private List<Map<String, String>> parseOrder(String inputOrder) {
+        String inputOrderWithoutSquareBrackets = Parser.removeSquareBrackets(inputOrder);
+        List<String> inputOrders = Parser.splitByComma(inputOrderWithoutSquareBrackets);
+        Map<String, String> parsedOrder = inputOrders.stream()
                 .collect(Collectors.toMap(
-                        product -> Parser.splitByHyphen(product).getFirst(),
-                        product -> Parser.splitByHyphen(product).getLast()
+                        order -> Parser.splitByHyphen(order).getFirst(),
+                        order -> Parser.splitByHyphen(order).getLast()
                 ));
+        return List.of(parsedOrder);
     }
 }
