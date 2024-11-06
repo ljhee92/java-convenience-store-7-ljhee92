@@ -12,9 +12,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-//- [ ] 입력한 상품명이 존재하는 상품인지 검증
-//- [ ] 입력한 수량이 재고 수량 이내인지 검증
-
 @DisplayName("사용자 입력 테스트")
 public class InputViewTest extends NsTest {
     private InputView inputView;
@@ -28,7 +25,7 @@ public class InputViewTest extends NsTest {
     @DisplayName("입력한 구매할 상품과 수량의 형식 검증")
     void validateFormat() {
         run("[콜라-10],[사이다-3]");
-        assertThat(inputView.requestPurchaseProduct())
+        assertThat(inputView.requestOrder())
                 .isEqualTo(Map.of("콜라", "10", "사이다", "3"));
     }
 
@@ -38,7 +35,7 @@ public class InputViewTest extends NsTest {
     void inValidFormat(String input) {
         run(input);
         assertThatThrownBy(() -> {
-            inputView.requestPurchaseProduct();
+            inputView.requestOrder();
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
