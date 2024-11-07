@@ -5,6 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import store.exception.InsufficientQuantityException;
+import store.exception.NotExistProductException;
+import store.util.ErrorMessage;
 
 import java.util.List;
 
@@ -34,7 +37,8 @@ public class OrderTest {
     void hasProductException(String inputName, int inputQuantity) {
         assertThatThrownBy(() -> {
             new Order(products, inputName, inputQuantity);
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(NotExistProductException.class)
+                .hasMessage(ErrorMessage.NOT_EXIST_PRODUCT);
     }
 
     @ParameterizedTest
@@ -43,6 +47,7 @@ public class OrderTest {
     void withinQuantityException(String inputName, int inputQuantity) {
         assertThatThrownBy(() -> {
             new Order(products, inputName, inputQuantity);
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(InsufficientQuantityException.class)
+                .hasMessage(ErrorMessage.INSUFFICIENT_QUANTITY);
     }
 }

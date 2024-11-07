@@ -1,5 +1,9 @@
 package store.domain;
 
+import store.exception.InsufficientQuantityException;
+import store.exception.NotExistProductException;
+import store.util.ErrorMessage;
+
 public class Order {
     private final String name;
     private final int quantity;
@@ -14,13 +18,13 @@ public class Order {
 
     private void validateProductName(Products products, String name) {
         if (!products.contains(name)) {
-            throw new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.");
+            throw new NotExistProductException(ErrorMessage.NOT_EXIST_PRODUCT);
         }
     }
 
     private void validateQuantity(Products products, String name, int quantity) {
         if (!products.availablePurchase(name, quantity)) {
-            throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
+            throw new InsufficientQuantityException(ErrorMessage.INSUFFICIENT_QUANTITY);
         }
     }
 

@@ -1,5 +1,7 @@
 package store.view;
 
+import store.exception.ProductFormatException;
+import store.util.ErrorMessage;
 import store.util.Parser;
 import store.util.UserInputReader;
 
@@ -16,11 +18,11 @@ public class InputView extends UserInputReader {
 
     private void validateOrderFormat(String inputOrder) {
         if (inputOrder.isBlank()) {
-            throw new IllegalArgumentException();
+            throw new ProductFormatException(ErrorMessage.PRODUCT_FORMAT);
         }
 
         if (!inputOrder.matches("^(\\[[가-힣]+-[0-9]+])*,*(\\[[가-힣]+-[0-9]+])$")) {
-            throw new IllegalArgumentException();
+            throw new ProductFormatException(ErrorMessage.PRODUCT_FORMAT);
         }
     }
 
