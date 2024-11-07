@@ -1,5 +1,9 @@
 package store.domain;
 
+import store.dto.ProductDTO;
+
+import java.util.Objects;
+
 public class Product {
     private final String name;
     private final int price;
@@ -10,10 +14,6 @@ public class Product {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
-
-        if ("null".equals(promotion)) {
-            promotion = "미진행";
-        }
         this.promotion = promotion;
     }
 
@@ -21,10 +21,32 @@ public class Product {
         return this.name.equals(name);
     }
 
+    public boolean inProgressPromotion(String name) {
+        return !"null".equals(this.promotion);
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public int getQuantity(String name) {
-        if (this.exist(name)) {
-            return this.quantity;
-        }
-        return 0;
+        return this.quantity;
+    }
+
+    public ProductDTO toDTO() {
+        return new ProductDTO(this.name, this.price, this.quantity, this.promotion);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return price == product.price && Objects.equals(name, product.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price);
     }
 }

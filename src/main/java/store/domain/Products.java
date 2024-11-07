@@ -1,12 +1,9 @@
 package store.domain;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.function.Consumer;
 
-public class Products implements Iterable {
+public class Products implements Iterable<Product> {
     private List<Product> products;
 
     public Products(List<Product> products) {
@@ -17,42 +14,34 @@ public class Products implements Iterable {
         products.add(product);
     }
 
+    public boolean onlyHasInProgressPromotion(Product product) {
+        return Collections.frequency(products, product) == 1 && product.inProgressPromotion(product.getName());
+    }
+
     public boolean contains(String productName) {
-        boolean found = false;
-        for (Product product : products) {
-            if (product.exist(productName)) {
-                found = true;
-                break;
-            }
-        }
-        return found;
+        return products.stream().anyMatch(product -> product.exist(productName));
     }
 
     public boolean availablePurchase(String productName, int quantity) {
-        boolean found = false;
-        int totalQuantity = 0;
-
-        for (Product product : products) {
-            totalQuantity += product.getQuantity(productName);
-            if (totalQuantity >= quantity) {
-                found = true;
-            }
-        }
-        return found;
+        int totalQuantity = products.stream()
+                .filter(product -> product.exist(productName))
+                .mapToInt(product -> product.getQuantity(productName))
+                .sum();
+        return totalQuantity >= quantity;
     }
 
     @Override
-    public Iterator iterator() {
-        return null;
-    }
-
-    @Override
-    public void forEach(Consumer action) {
+    public void forEach(Consumer<? super Product> action) {
         Iterable.super.forEach(action);
     }
 
     @Override
-    public Spliterator spliterator() {
+    public Spliterator<Product> spliterator() {
         return Iterable.super.spliterator();
+    }
+
+    @Override
+    public Iterator<Product> iterator() {
+        return products.iterator();
     }
 }

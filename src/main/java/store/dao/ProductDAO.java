@@ -23,7 +23,6 @@ public class ProductDAO {
             Product product = productMapper.mapToProduct(line);
             products.add(product);
         }
-        System.out.println(products);
         return products;
     }
 

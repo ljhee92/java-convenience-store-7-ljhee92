@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class Promotions implements Iterable {
+public class Promotions implements Iterable<Promotion> {
     private List<Promotion> promotions;
 
     public Promotions(List<Promotion> promotions) {
@@ -23,17 +23,17 @@ public class Promotions implements Iterable {
     }
 
     @Override
-    public Iterator iterator() {
-        return null;
-    }
-
-    @Override
-    public void forEach(Consumer action) {
+    public void forEach(Consumer<? super Promotion> action) {
         Iterable.super.forEach(action);
     }
 
     @Override
-    public Spliterator spliterator() {
+    public Spliterator<Promotion> spliterator() {
         return Iterable.super.spliterator();
+    }
+
+    @Override
+    public Iterator<Promotion> iterator() {
+        return promotions.iterator();
     }
 }
