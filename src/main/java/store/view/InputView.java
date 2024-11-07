@@ -1,4 +1,7 @@
-package store;
+package store.view;
+
+import store.util.Parser;
+import store.util.UserInputReader;
 
 import java.util.List;
 import java.util.Map;

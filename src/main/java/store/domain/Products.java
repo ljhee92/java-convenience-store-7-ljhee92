@@ -1,4 +1,4 @@
-package store;
+package store.domain;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,6 +11,10 @@ public class Products implements Iterable {
 
     public Products(List<Product> products) {
         this.products = new ArrayList<>(products);
+    }
+
+    public void add(Product product) {
+        products.add(product);
     }
 
     public boolean contains(String productName) {

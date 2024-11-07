@@ -1,4 +1,4 @@
-package store;
+package store.domain;
 
 import java.time.LocalDate;
 
@@ -15,5 +15,16 @@ public class Promotion {
         this.get = get;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Promotion{" +
+                "name='" + name + '\'' +
+                ", buy=" + buy +
+                ", get=" + get +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
     }
 }

@@ -1,7 +1,8 @@
-package store;
+package store.dao;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import store.domain.Promotion;
 
 import java.time.LocalDate;
 
