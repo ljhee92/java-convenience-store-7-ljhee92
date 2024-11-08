@@ -12,7 +12,7 @@ public class FileInputReader {
             FileReader fileReader = new FileReader(filePath);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            List<String> contentsByLine = readData(bufferedReader);
+            List<String> contentsByLine = readContents(bufferedReader);
 
             closeReader(bufferedReader, fileReader);
 
@@ -22,7 +22,7 @@ public class FileInputReader {
         }
     }
 
-    private List<String> readData(BufferedReader bufferedReader) throws IOException {
+    private List<String> readContents(BufferedReader bufferedReader) throws IOException {
         String line = "";
         List<String> contentsByLine = new ArrayList<>();
 

@@ -12,14 +12,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("파일 입출력 테스트")
 public class FileInputReaderTest {
     @ParameterizedTest(name = "{index} : {2}")
-    @MethodSource("generateData")
+    @MethodSource("generateValues")
     @DisplayName("파일 입출력을 통해 읽어 들인 상품 목록, 행사 목록이 파일 내용과 동일한지 랜덤으로 확인한다.")
     void containsContents(String path, String content, String message) {
         FileInputReader fileInputReader = new FileInputReader();
         assertThat(fileInputReader.readFile(path)).contains(content);
     }
 
-    static Stream<Arguments> generateData() {
+    static Stream<Arguments> generateValues() {
         return Stream.of(
                 Arguments.of("src/main/resources/products.md",
                         "비타민워터,1500,6,null", "products 랜덤1"),
