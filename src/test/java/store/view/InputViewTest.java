@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import store.exception.ProductFormatException;
-import store.util.ErrorMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -39,8 +38,7 @@ public class InputViewTest extends NsTest {
         run(input);
         assertThatThrownBy(() -> {
             inputView.requestOrder();
-        }).isInstanceOf(ProductFormatException.class)
-                .hasMessage(ErrorMessage.PRODUCT_FORMAT);
+        }).isInstanceOf(ProductFormatException.class);
     }
 
     @Override

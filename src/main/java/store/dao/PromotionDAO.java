@@ -19,10 +19,11 @@ public class PromotionDAO {
     public List<Promotion> selectAllPromotions() {
         List<String> promotionsForFileByLine  = load();
         List<Promotion> promotions = new ArrayList<>();
-        for (String line : promotionsForFileByLine) {
+
+        promotionsForFileByLine.forEach(line -> {
             Promotion promotion = promotionMapper.mapToPromotion(line);
             promotions.add(promotion);
-        }
+        });
         return promotions;
     }
 

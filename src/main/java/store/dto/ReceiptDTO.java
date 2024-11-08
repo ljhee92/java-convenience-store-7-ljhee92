@@ -3,16 +3,16 @@ package store.dto;
 import java.util.List;
 
 public class ReceiptDTO {
-    private final List<OrderItemDTO> orderItemDTOS;
+    private final List<OrderItemDTO> orderItemsDTO;
     private final int totalPrice;
 
-    public ReceiptDTO(List<OrderItemDTO> orderItemDTOS, int totalPrice) {
-        this.orderItemDTOS = orderItemDTOS;
+    public ReceiptDTO(List<OrderItemDTO> orderItemsDTO, int totalPrice) {
+        this.orderItemsDTO = orderItemsDTO;
         this.totalPrice = totalPrice;
     }
 
-    public List<OrderItemDTO> getOrderItemDTOS() {
-        return orderItemDTOS;
+    public List<OrderItemDTO> getOrderItemsDTO() {
+        return orderItemsDTO;
     }
 
     public int getTotalPrice() {

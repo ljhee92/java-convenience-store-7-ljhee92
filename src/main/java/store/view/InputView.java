@@ -2,7 +2,6 @@ package store.view;
 
 import store.exception.InvalidInputException;
 import store.exception.ProductFormatException;
-import store.util.ErrorMessage;
 import store.util.Parser;
 import store.util.UserInputReader;
 
@@ -20,11 +19,11 @@ public class InputView extends UserInputReader {
 
     private void validateOrderFormat(String inputOrder) {
         if (inputOrder.isBlank()) {
-            throw new ProductFormatException(ErrorMessage.PRODUCT_FORMAT);
+            throw new ProductFormatException(inputOrder);
         }
 
         if (!inputOrder.matches("^(\\[[가-힣]+-[0-9]+])(,(\\[[가-힣]+-[0-9]+]))*$")) {
-            throw new ProductFormatException(ErrorMessage.PRODUCT_FORMAT);
+            throw new ProductFormatException(inputOrder);
         }
     }
 
@@ -48,11 +47,11 @@ public class InputView extends UserInputReader {
 
     private void validateYesOrNoFormat(String inputYesOrNo) {
         if (inputYesOrNo.isBlank()) {
-            throw new InvalidInputException(ErrorMessage.INVALID_INPUT);
+            throw new InvalidInputException(inputYesOrNo);
         }
 
         if (!"N".equals(inputYesOrNo) && !"Y".equals(inputYesOrNo)) {
-            throw new InvalidInputException(ErrorMessage.INVALID_INPUT);
+            throw new InvalidInputException(inputYesOrNo);
         }
     }
 }

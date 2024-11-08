@@ -19,10 +19,11 @@ public class ProductDAO {
     public List<Product> selectAllProducts() {
         List<String> productsForFileByLine = load();
         List<Product> products = new ArrayList<>();
-        for (String line : productsForFileByLine) {
+
+        productsForFileByLine.forEach(line -> {
             Product product = productMapper.mapToProduct(line);
             products.add(product);
-        }
+        });
         return products;
     }
 

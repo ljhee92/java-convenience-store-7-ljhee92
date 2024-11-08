@@ -14,10 +14,10 @@ public class Orders implements Iterable<Order> {
     }
 
     public void processOrder(Promotions promotions) {
-        for (Order order : orders) {
+        orders.forEach(order -> {
             order.checkPromotionForOrder(promotions);
             order.processOrder();
-        }
+        });
     }
 
     @Override

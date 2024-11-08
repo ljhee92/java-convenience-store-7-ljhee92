@@ -38,23 +38,25 @@ public class StoreController {
         Promotions promotions = promotionService.getAllPromotions();
 
         do {
-            order(products, promotions);
+            welcomeGreetingAndProducts(products);
+            Orders orders = retryHandler.repeat(() -> takeOrders(products));
+            orders.processOrder(promotions);
+            printReceipt(orders);
         } while (retryHandler.repeat(() -> inputView.requestReOrder().equals("Y")));
     }
 
-    private void order(Products products, Promotions promotions) {
+    private void welcomeGreetingAndProducts(Products products) {
         List<ProductDTO> productsDTO = productService.getAllProductsDTO(products);
         outputView.displayWelcomeAndProducts(productsDTO);
-
-        Orders orders = retryHandler.repeat(() -> takeOrders(products));
-        orders.processOrder(promotions);
-
-        Receipt receipt = new Receipt(orders);
-        outputView.displayReceipt(receipt.toReceiptDTO());
     }
 
     private Orders takeOrders(Products products) {
         List<Map<String, String>> inputOrders = inputView.requestOrder();
         return new Orders(orderService.takeOrders(inputOrders, products));
+    }
+
+    private void printReceipt(Orders orders) {
+        Receipt receipt = new Receipt(orders);
+        outputView.displayReceipt(receipt.toDTO());
     }
 }

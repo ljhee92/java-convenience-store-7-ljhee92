@@ -13,14 +13,14 @@ public class Receipt {
         this.orders = orders;
     }
 
-    private List<OrderItemDTO> orderInfoByOrder() {
-        List<OrderItemDTO> orderItemsByOrderDTODTO = new ArrayList<>();
-        for (Order order : orders) {
+    private List<OrderItemDTO> getOrderItems() {
+        List<OrderItemDTO> orderItemsDTO = new ArrayList<>();
+        orders.forEach(order -> {
             OrderItemDTO orderItemDTO = new OrderItemDTO(order.getName(), order.getQuantity(),
                     order.getPurchaseAmount());
-            orderItemsByOrderDTODTO.add(orderItemDTO);
-        }
-        return orderItemsByOrderDTODTO;
+            orderItemsDTO.add(orderItemDTO);
+        });
+        return orderItemsDTO;
     }
 
     private int calculateTotalAmount() {
@@ -31,7 +31,7 @@ public class Receipt {
         return totalAmount;
     }
 
-    public ReceiptDTO toReceiptDTO() {
-        return new ReceiptDTO(orderInfoByOrder(), calculateTotalAmount());
+    public ReceiptDTO toDTO() {
+        return new ReceiptDTO(getOrderItems(), calculateTotalAmount());
     }
 }

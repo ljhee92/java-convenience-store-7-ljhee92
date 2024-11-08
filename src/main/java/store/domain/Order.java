@@ -2,7 +2,6 @@ package store.domain;
 
 import store.exception.InsufficientQuantityException;
 import store.exception.NotExistProductException;
-import store.util.ErrorMessage;
 
 public class Order {
     private final String name;
@@ -21,13 +20,13 @@ public class Order {
 
     private void validateProductName(Products products, String name) {
         if (!products.contains(name)) {
-            throw new NotExistProductException(ErrorMessage.NOT_EXIST_PRODUCT);
+            throw new NotExistProductException(name);
         }
     }
 
     private void validateQuantity(Products products, String name, int quantity) {
         if (!products.isAvailablePurchase(name, quantity)) {
-            throw new InsufficientQuantityException(ErrorMessage.INSUFFICIENT_QUANTITY);
+            throw new InsufficientQuantityException(String.format("%s,%d", name, quantity));
         }
     }
 
@@ -47,15 +46,16 @@ public class Order {
             Product onPromotionProduct = products.getOnPromotionProduct();
             int onPromotionStock = onPromotionProduct.getStock();
 
-            int buy = promotion.getBuy();
-            int free = promotion.getFree();
-
-            if (remainingQuantity < buy + free) {
-                System.out.println("현재 오렌지주스은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
-            }
+//            int buy = promotion.getBuy();
+//            int free = promotion.getFree();
+//
+//            if (remainingQuantity < buy + free) {
+//                System.out.println("현재 오렌지주스은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
+//            }
 
             remainingQuantity = getRemainingQuantity(remainingQuantity, onPromotionProduct, onPromotionStock);
         }
+
         if (products.getGeneralProduct() != null) {
             Product generalProduct = products.getGeneralProduct();
             int generalStock = generalProduct.getStock();

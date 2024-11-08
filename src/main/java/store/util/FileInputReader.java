@@ -13,9 +13,7 @@ public class FileInputReader {
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             List<String> contentsByLine = readContents(bufferedReader);
-
             closeReader(bufferedReader, fileReader);
-
             return contentsByLine;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -29,7 +27,6 @@ public class FileInputReader {
         while ((line = bufferedReader.readLine()) != null) {
             contentsByLine.add(line);
         }
-
         return contentsByLine;
     }
 

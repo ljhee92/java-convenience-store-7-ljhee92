@@ -1,6 +1,7 @@
 package store.service;
 
 import store.dao.ProductDAO;
+import store.domain.Product;
 import store.domain.Products;
 import store.dto.ProductDTO;
 
@@ -20,15 +21,17 @@ public class ProductService {
 
     public List<ProductDTO> getAllProductsDTO(Products products) {
         List<ProductDTO> productsDTO = new ArrayList<>();
-
-        products.forEach(product -> {
-            ProductDTO productDTO = product.toDTO();
-            productsDTO.add(productDTO);
-            if (products.onlyHasOnPromotion(product)) {
-                ProductDTO tempDTO = new ProductDTO(productDTO.getName(), productDTO.getPrice(), 0, "");
-                productsDTO.add(tempDTO);
-            }
-        });
+        products.forEach(product -> addProductsDTO(productsDTO, products, product));
         return productsDTO;
+    }
+
+    private void addProductsDTO(List<ProductDTO> productsDTO, Products products, Product product) {
+        ProductDTO productDTO = product.toDTO();
+        productsDTO.add(productDTO);
+
+        if (products.onlyHasOnPromotion(product)) {
+            ProductDTO tempDTO = new ProductDTO(productDTO.getName(), productDTO.getPrice(), 0, "");
+            productsDTO.add(tempDTO);
+        }
     }
 }
