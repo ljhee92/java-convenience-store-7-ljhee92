@@ -20,7 +20,7 @@ public class OutputView {
     private String getProductQuantityFormat(ProductDTO productDTO) {
         String quantityFormat = String.format("%,d개", productDTO.getQuantity());
         if (productDTO.getQuantity() == 0) {
-            quantityFormat = "재고 없음 ";
+            quantityFormat = "재고 없음";
         }
         return quantityFormat;
     }
