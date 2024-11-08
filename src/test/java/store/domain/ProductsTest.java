@@ -30,6 +30,6 @@ public class ProductsTest {
         Product cider = new Product("사이다", 1000, 8, "탄산2+1");
         Products products = new Products(List.of(cokeWithPromotion, coke, cider));
 
-        assertThat(products.availablePurchase(inputProductName, inputQuantity)).isEqualTo(true);
+        assertThat(products.isAvailablePurchase(inputProductName, inputQuantity)).isEqualTo(true);
     }
 }

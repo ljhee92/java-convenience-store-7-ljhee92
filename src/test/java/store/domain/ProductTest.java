@@ -26,8 +26,7 @@ public class ProductTest {
     @Test
     @DisplayName("입력한 상품의 재고 개수 검증")
     void getAllQuantity() {
-        String inputProductName = "콜라";
         Product product = new Product("콜라", 1000, 10, "탄산2+1");
-        assertThat(product.getQuantity(inputProductName)).isEqualTo(10);
+        assertThat(product.getStock()).isEqualTo(10);
     }
 }

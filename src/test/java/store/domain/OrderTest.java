@@ -28,7 +28,7 @@ public class OrderTest {
     @Test
     @DisplayName("주문 객체 생성 테스트")
     void createOrder() {
-        assertThat(new Order(products, "콜라", 10)).isInstanceOf(Order.class);
+        assertThat(new Order("콜라", 10, products)).isInstanceOf(Order.class);
     }
 
     @ParameterizedTest
@@ -36,7 +36,7 @@ public class OrderTest {
     @DisplayName("주문한 상품명에 존재하지 않는 상품을 포함하고 있다면 예외처리 검증")
     void hasProductException(String inputName, int inputQuantity) {
         assertThatThrownBy(() -> {
-            new Order(products, inputName, inputQuantity);
+            new Order(inputName, inputQuantity, products);
         }).isInstanceOf(NotExistProductException.class)
                 .hasMessage(ErrorMessage.NOT_EXIST_PRODUCT);
     }
@@ -46,7 +46,7 @@ public class OrderTest {
     @DisplayName("주문한 수량이 재고 수량을 초과하면 예외처리 검증")
     void withinQuantityException(String inputName, int inputQuantity) {
         assertThatThrownBy(() -> {
-            new Order(products, inputName, inputQuantity);
+            new Order(inputName, inputQuantity, products);
         }).isInstanceOf(InsufficientQuantityException.class)
                 .hasMessage(ErrorMessage.INSUFFICIENT_QUANTITY);
     }
