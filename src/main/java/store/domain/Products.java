@@ -14,10 +14,6 @@ public class Products implements Iterable<Product> {
         this.products = new ArrayList<>(products);
     }
 
-    public void add(Product product) {
-        products.add(product);
-    }
-
     public boolean onlyHasOnPromotion(Product product) {
         return Collections.frequency(products, product) == 1 && product.onPromotion();
     }
