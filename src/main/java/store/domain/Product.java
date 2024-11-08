@@ -7,13 +7,13 @@ import java.util.Objects;
 public class Product {
     private final String name;
     private final int price;
-    private int quantity;
+    private int stock;
     private final String promotion;
 
-    public Product(String name, int price, int quantity, String promotion) {
+    public Product(String name, int price, int stock, String promotion) {
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
+        this.stock = stock;
         this.promotion = promotion;
     }
 
@@ -21,20 +21,28 @@ public class Product {
         return this.name.equals(name);
     }
 
-    public boolean inProgressPromotion(String name) {
+    public boolean onPromotion() {
         return !"null".equals(this.promotion);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getQuantity(String name) {
-        return this.quantity;
-    }
-
     public ProductDTO toDTO() {
-        return new ProductDTO(this.name, this.price, this.quantity, this.promotion);
+        return new ProductDTO(this.name, this.price, this.stock, this.promotion);
+    }
+
+    public void reduceStock(int orderQuantity) {
+        this.stock -= orderQuantity;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public String getPromotion() {
+        return promotion;
     }
 
     @Override
@@ -48,5 +56,15 @@ public class Product {
     @Override
     public int hashCode() {
         return Objects.hash(name, price);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                ", promotion='" + promotion + '\'' +
+                '}';
     }
 }

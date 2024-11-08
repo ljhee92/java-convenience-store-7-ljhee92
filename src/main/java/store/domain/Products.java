@@ -1,10 +1,14 @@
 package store.domain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 
 public class Products implements Iterable<Product> {
-    private List<Product> products;
+    private final List<Product> products;
 
     public Products(List<Product> products) {
         this.products = new ArrayList<>(products);
@@ -14,20 +18,44 @@ public class Products implements Iterable<Product> {
         products.add(product);
     }
 
-    public boolean onlyHasInProgressPromotion(Product product) {
-        return Collections.frequency(products, product) == 1 && product.inProgressPromotion(product.getName());
+    public boolean onlyHasOnPromotion(Product product) {
+        return Collections.frequency(products, product) == 1 && product.onPromotion();
     }
 
     public boolean contains(String productName) {
         return products.stream().anyMatch(product -> product.exist(productName));
     }
 
-    public boolean availablePurchase(String productName, int quantity) {
+    public boolean isAvailablePurchase(String productName, int orderQuantity) {
         int totalQuantity = products.stream()
                 .filter(product -> product.exist(productName))
-                .mapToInt(product -> product.getQuantity(productName))
+                .mapToInt(Product::getStock)
                 .sum();
-        return totalQuantity >= quantity;
+        return totalQuantity >= orderQuantity;
+    }
+
+    public Products getProductsByName(String productName) {
+        return new Products(products.stream()
+                .filter(product -> product.exist(productName))
+                .toList());
+    }
+
+    public Product getGeneralProduct() {
+        for (Product product : products) {
+            if (!product.onPromotion()) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    public Product getOnPromotionProduct() {
+        for (Product product : products) {
+            if (product.onPromotion()) {
+                return product;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -43,5 +71,12 @@ public class Products implements Iterable<Product> {
     @Override
     public Iterator<Product> iterator() {
         return products.iterator();
+    }
+
+    @Override
+    public String toString() {
+        return "Products{" +
+                "products=" + products +
+                '}';
     }
 }

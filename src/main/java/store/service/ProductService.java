@@ -1,9 +1,8 @@
 package store.service;
 
-import store.dto.ProductDTO;
 import store.dao.ProductDAO;
-import store.domain.Product;
 import store.domain.Products;
+import store.dto.ProductDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +18,17 @@ public class ProductService {
         return new Products(productDAO.selectAllProducts());
     }
 
-    public List<ProductDTO> searchAllProducts() {
-        Products products = new Products(productDAO.selectAllProducts());
+    public List<ProductDTO> getAllProductsDTO(Products products) {
         List<ProductDTO> productsDTO = new ArrayList<>();
 
-        for (Product product : products) {
+        products.forEach(product -> {
             ProductDTO productDTO = product.toDTO();
             productsDTO.add(productDTO);
-            if (products.onlyHasInProgressPromotion(product)) {
+            if (products.onlyHasOnPromotion(product)) {
                 ProductDTO tempDTO = new ProductDTO(productDTO.getName(), productDTO.getPrice(), 0, "");
                 productsDTO.add(tempDTO);
             }
-        }
+        });
         return productsDTO;
     }
 }
