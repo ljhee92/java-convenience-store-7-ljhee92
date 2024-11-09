@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import store.exception.ProductFormatException;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,7 +27,7 @@ public class InputViewTest extends NsTest {
     void validateFormat() {
         run("[콜라-10],[사이다-3]");
         assertThat(inputView.requestOrder())
-                .isEqualTo(List.of(Map.of("콜라", "10", "사이다", "3")));
+                .isEqualTo(List.of(List.of("콜라", "10"), List.of("사이다", "3")));
     }
 
     @ParameterizedTest()

@@ -51,7 +51,7 @@ public class StoreController {
     }
 
     private Orders takeOrders(Products products) {
-        List<Map<String, String>> inputOrders = inputView.requestOrder();
+        List<List<String>> inputOrders = inputView.requestOrder();
         return new Orders(orderService.takeOrders(inputOrders, products));
     }
 
