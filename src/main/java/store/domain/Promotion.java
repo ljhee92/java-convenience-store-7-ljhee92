@@ -37,7 +37,7 @@ public class Promotion implements DiscountStrategy {
     }
 
     @Override
-    public int getDiscountPrice(int price) {
+    public double getDiscountPrice(double price) {
         return 0;
     }
 

@@ -3,14 +3,14 @@ package store.dto;
 public class OrderItemDTO {
     private final String name;
     private final int totalQuantity;
-    private final int pricePerProduct;
+    private final double pricePerProduct;
     private final int orderedPromotionQuantity;
     private final int orderedNotPromotionQuantity;
     private final int freeMoreQuantity;
     private final int notApplicablePromotionQuantity;
     private final int freeQuantity;
 
-    public OrderItemDTO(String name, int totalQuantity, int pricePerProduct,
+    public OrderItemDTO(String name, int totalQuantity, double pricePerProduct,
                         int orderedPromotionQuantity, int orderedNotPromotionQuantity, int freeMoreQuantity,
                         int notApplicablePromotionQuantity, int freeQuantity) {
         this.name = name;
@@ -31,7 +31,7 @@ public class OrderItemDTO {
         return totalQuantity;
     }
 
-    public int getPricePerProduct() {
+    public double getPricePerProduct() {
         return pricePerProduct;
     }
 

@@ -25,22 +25,32 @@ public class OutputView {
     }
 
     public void displayReceipt(ReceiptDTO receiptDTO) {
-        System.out.println("===========W 편의점=============");
-        System.out.println("상품명\t\t수량\t\t\t금액");
+        System.out.println("==============W 편의점================");
+        System.out.println("상품명\t\t\t수량\t\t\t금액");
         displayOrderItemsDTO(receiptDTO);
-        System.out.println("===========증\t정=============");
-        System.out.println("==============================");
-        System.out.println("총구매액\t\t\t\t\t" + String.format("%,d", receiptDTO.getTotalPrice()));
-        System.out.println("행사할인\t\t\t\t\t" + String.format("-%,d", receiptDTO.getDiscountForPromotion()));
-        System.out.println("멤버십할인\t\t\t\t\t" + String.format("-%,d", receiptDTO.getDiscountForMembership()));
-        System.out.println("내실돈\t\t\t\t\t" + String.format("%,d",receiptDTO.getMoneyForPay()));
+        System.out.println("=============증\t\t정===============");
+        displayPromotionItemsDTO(receiptDTO);
+        System.out.println("====================================");
+        System.out.printf("%s\t\t\t%d\t\t\t%,.0f%n", "총구매액", receiptDTO.getTotalQuantity(), receiptDTO.getTotalPrice());
+        System.out.printf("%s\t\t\t\t\t\t-%,.0f%n", "행사할인", receiptDTO.getDiscountForPromotion());
+        System.out.printf("%s\t\t\t\t\t\t-%,.0f%n", "멤버십할인", receiptDTO.getDiscountForMembership());
+        System.out.printf("%s\t\t\t\t\t\t%,.0f%n", "내실돈", receiptDTO.getMoneyForPay());
     }
 
     private void displayOrderItemsDTO(ReceiptDTO receiptDTO) {
         receiptDTO.getOrderItemsDTO().forEach(orderItemDTO -> {
-            System.out.println(orderItemDTO.getName() + "\t\t" + orderItemDTO.getTotalQuantity()
-                    + "\t\t\t" + orderItemDTO.getPricePerProduct());
+            System.out.printf("%-15s", orderItemDTO.getName());
+            System.out.printf("%-5d", orderItemDTO.getTotalQuantity());
+            System.out.printf("%,12.0f%n", (orderItemDTO.getTotalQuantity() * orderItemDTO.getPricePerProduct()));;
         });
     }
 
+    private void displayPromotionItemsDTO(ReceiptDTO receiptDTO) {
+        receiptDTO.getOrderItemsDTO().forEach(orderItemDTO -> {
+            if (orderItemDTO.getFreeQuantity() != 0) {
+                System.out.printf("%-15s", orderItemDTO.getName());
+                System.out.printf("%-5d%n", orderItemDTO.getFreeQuantity());
+            }
+        });
+    }
 }

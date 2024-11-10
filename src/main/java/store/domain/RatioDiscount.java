@@ -4,17 +4,17 @@ public enum RatioDiscount implements DiscountStrategy {
     MEMBERSHIP(30);
 
     private static final int ONE = 1;
-    private static final int ONE_HUNDRED = 100;
+    private static final double PERCENTAGE = 0.01;
 
-    private final int discountRatio;
+    private final double discountRatio;
 
-    RatioDiscount(int discountRatio) {
+    RatioDiscount(double discountRatio) {
         this.discountRatio = discountRatio;
     }
 
     @Override
-    public int getDiscountPrice(int price) {
-        int discountForMembership = price * (discountRatio / ONE_HUNDRED);
+    public double getDiscountPrice(double price) {
+        double discountForMembership = price * (discountRatio * PERCENTAGE);
 
         if (discountForMembership > 8000) {
             discountForMembership = 8000;

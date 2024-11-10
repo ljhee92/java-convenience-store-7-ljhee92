@@ -4,14 +4,16 @@ import java.util.List;
 
 public class ReceiptDTO {
     private final List<OrderItemDTO> orderItemsDTO;
-    private final int totalPrice;
-    private final int discountForPromotion;
-    private final int discountForMembership;
-    private final int moneyForPay;
+    private int totalQuantity;
+    private final double totalPrice;
+    private final double discountForPromotion;
+    private double discountForMembership;
+    private double moneyForPay;
 
-    public ReceiptDTO(List<OrderItemDTO> orderItemsDTO, int totalPrice,
-                      int discountForPromotion, int discountForMembership, int moneyForPay) {
+    public ReceiptDTO(List<OrderItemDTO> orderItemsDTO, int totalQuantity, double totalPrice,
+                      double discountForPromotion, double discountForMembership, double moneyForPay) {
         this.orderItemsDTO = orderItemsDTO;
+        this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
         this.discountForPromotion = discountForPromotion;
         this.discountForMembership = discountForMembership;
@@ -22,19 +24,42 @@ public class ReceiptDTO {
         return orderItemsDTO;
     }
 
-    public int getTotalPrice() {
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public double getTotalPrice() {
         return totalPrice;
     }
 
-    public int getDiscountForPromotion() {
+    public double getDiscountForPromotion() {
         return discountForPromotion;
     }
 
-    public int getDiscountForMembership() {
+    public double getDiscountForMembership() {
         return discountForMembership;
     }
 
-    public int getMoneyForPay() {
+    public double getMoneyForPay() {
         return moneyForPay;
+    }
+
+    public void setDiscountForMembership(double discountForMembership) {
+        this.discountForMembership = discountForMembership;
+    }
+
+    public void setMoneyForPay(double moneyForPay) {
+        this.moneyForPay = moneyForPay;
+    }
+
+    @Override
+    public String toString() {
+        return "ReceiptDTO{" +
+                "orderItemsDTO=" + orderItemsDTO +
+                ", totalPrice=" + totalPrice +
+                ", discountForPromotion=" + discountForPromotion +
+                ", discountForMembership=" + discountForMembership +
+                ", moneyForPay=" + moneyForPay +
+                '}';
     }
 }
