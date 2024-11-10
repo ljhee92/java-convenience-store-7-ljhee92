@@ -7,14 +7,13 @@ import java.util.List;
 
 public class OutputView {
     public void displayWelcomeAndProducts(List<ProductDTO> productsDTO) {
-        System.out.println(String.format("%s", "안녕하세요. W편의점입니다.", System.lineSeparator()));
-        System.out.println(String.format("%s", "현재 보유하고 있는 상품입니다.", System.lineSeparator()));
+        System.out.printf("%s%n", "안녕하세요. W편의점입니다.");
+        System.out.printf("%s%n%n", "현재 보유하고 있는 상품입니다.");
         productsDTO.forEach(productDTO -> {
-            System.out.println(String.format("- %s %,d원 %s %s",
-                    productDTO.getName(), productDTO.getPrice(),
-                    getProductQuantityFormat(productDTO), productDTO.getPromotion(),
-                    System.lineSeparator()));
+            System.out.printf("- %s %,d원 %s %s%n", productDTO.getName(), productDTO.getPrice(),
+                    getProductQuantityFormat(productDTO), productDTO.getPromotion());
         });
+        System.out.println();
     }
 
     private String getProductQuantityFormat(ProductDTO productDTO) {
@@ -39,8 +38,8 @@ public class OutputView {
 
     private void displayOrderItemsDTO(ReceiptDTO receiptDTO) {
         receiptDTO.getOrderItemsDTO().forEach(orderItemDTO -> {
-            System.out.println(orderItemDTO.getName() + "\t\t" + orderItemDTO.getQuantity()
-                    + "\t\t\t" + orderItemDTO.getPrice());
+            System.out.println(orderItemDTO.getName() + "\t\t" + orderItemDTO.getTotalQuantity()
+                    + "\t\t\t" + orderItemDTO.getPricePerProduct());
         });
     }
 
