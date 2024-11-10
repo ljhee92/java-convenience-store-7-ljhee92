@@ -23,13 +23,13 @@ public class StoreController {
     private final PromotionService promotionService;
 
     public StoreController(InputView inputView, OutputView outputView, RetryHandler retryHandler,
-                           ProductService productService, OrderService orderService, PromotionService promotionService) {
+                           ProductService productService, PromotionService promotionService, OrderService orderService) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.retryHandler = retryHandler;
         this.productService = productService;
-        this.orderService = orderService;
         this.promotionService = promotionService;
+        this.orderService = orderService;
     }
 
     public void run() {
