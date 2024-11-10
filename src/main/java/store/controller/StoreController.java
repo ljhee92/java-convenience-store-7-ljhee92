@@ -1,10 +1,10 @@
 package store.controller;
 
-import store.domain.Orders;
 import store.domain.Products;
 import store.domain.Promotions;
-import store.domain.Receipt;
+import store.dto.OrderItemDTO;
 import store.dto.ProductDTO;
+import store.dto.ReceiptDTO;
 import store.service.OrderService;
 import store.service.ProductService;
 import store.service.PromotionService;
@@ -13,7 +13,6 @@ import store.view.InputView;
 import store.view.OutputView;
 
 import java.util.List;
-import java.util.Map;
 
 public class StoreController {
     private final InputView inputView;
@@ -37,26 +36,58 @@ public class StoreController {
         Products products = productService.getAllProducts();
         Promotions promotions = promotionService.getAllPromotions();
 
-        do {
-            welcomeGreetingAndProducts(products);
-            Orders orders = retryHandler.repeat(() -> takeOrders(products));
-            orders.processOrder(promotions);
-            printReceipt(orders);
-        } while (retryHandler.repeat(() -> inputView.requestReOrder().equals("Y")));
+        welcomeGreetingAndTakeOrder(products, promotions);
+        progressDiscount();
+
+        retryHandler.repeat(() -> {
+            while (inputView.acceptReOrder()) {
+                retryHandler.repeat(() -> welcomeGreetingAndTakeOrder(products, promotions));
+                progressDiscount();
+            }
+        });
     }
 
-    private void welcomeGreetingAndProducts(Products products) {
+    private void welcomeGreetingAndTakeOrder(Products products, Promotions promotions) {
         List<ProductDTO> productsDTO = productService.getAllProductsDTO(products);
         outputView.displayWelcomeAndProducts(productsDTO);
+        retryHandler.repeat(() -> takeOrders(products, promotions));
     }
 
-    private Orders takeOrders(Products products) {
+    private void takeOrders(Products products, Promotions promotions) {
         List<List<String>> inputOrders = inputView.requestOrder();
-        return new Orders(orderService.takeOrders(inputOrders, products));
+        orderService.takeOrders(inputOrders, products, promotions);
     }
 
-    private void printReceipt(Orders orders) {
-        Receipt receipt = new Receipt(orders);
-        outputView.displayReceipt(receipt.toDTO());
+    private void progressDiscount() {
+        List<OrderItemDTO> orderItemsDTO = orderService.progressOrders();
+
+        for (OrderItemDTO orderItemDTO : orderItemsDTO) {
+            checkFreeMore(orderItemDTO);
+            checkNotApplicablePromotion(orderItemDTO);
+        }
+
+        if (!inputView.acceptApplicabilityForMembership()) {
+            ReceiptDTO receiptDTO = orderService.createReceipt(orderItemsDTO);
+            outputView.displayReceipt(receiptDTO);
+        }
+    }
+
+    private void checkFreeMore(OrderItemDTO orderItemDTO) {
+        if (orderItemDTO.getFreeMoreQuantity() >= orderItemDTO.getTotalQuantity()) {
+            if (inputView.acceptFreeMore(orderItemDTO)) {
+                productService.reduceStockForFree(orderItemDTO.getName(), orderItemDTO.getFreeMoreQuantity());
+            }
+        }
+    }
+
+    private void checkNotApplicablePromotion(OrderItemDTO orderItemDTO) {
+        if (orderItemDTO.getFreeMoreQuantity() != 0
+                && orderItemDTO.getTotalQuantity() > orderItemDTO.getOrderedPromotionQuantity()) {
+            if (!inputView.acceptApplicabilityForPromotion(orderItemDTO)) {
+                productService.resetStockForNotApplicablePromotion(orderItemDTO.getName(),
+                        orderItemDTO.getOrderedPromotionQuantity(),
+                        orderItemDTO.getOrderedNotPromotionQuantity());
+            }
+        }
     }
 }

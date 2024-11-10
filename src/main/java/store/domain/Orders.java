@@ -1,5 +1,7 @@
 package store.domain;
 
+import store.dto.OrderItemDTO;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,11 +15,17 @@ public class Orders implements Iterable<Order> {
         this.orders = new ArrayList<>(orders);
     }
 
-    public void processOrder(Promotions promotions) {
+    public List<OrderItemDTO> reduceStock() {
+        List<OrderItemDTO> orderItemsDTO = new ArrayList<>();
         orders.forEach(order -> {
-            order.checkPromotionForOrder(promotions);
-            order.processOrder();
+            order.reduceStock();
+            orderItemsDTO.add(order.toDTO());
         });
+        return orderItemsDTO;
+    }
+
+    public void add(Order order) {
+        orders.add(order);
     }
 
     @Override

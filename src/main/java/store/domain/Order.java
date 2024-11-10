@@ -1,21 +1,27 @@
 package store.domain;
 
+import store.dto.OrderItemDTO;
 import store.exception.InsufficientQuantityException;
 import store.exception.NotExistProductException;
+
+import java.util.List;
 
 public class Order {
     private final String name;
     private final int quantity;
     private final Products products;
-    private Promotion promotion;
+    private final Promotion promotion;
+    private List<Integer> purchasedQuantities;
+    private int freeMoreQuantity;
 
-    public Order(String name, int quantity, Products products) {
+    public Order(String name, int quantity, Products products, Promotions promotions) {
         validateProductName(products, name);
         validateQuantity(products, name, quantity);
 
         this.name = name;
         this.quantity = quantity;
         this.products = products.getProductsByName(name);
+        this.promotion = promotions.getPromotionByName(getPromotionName());
     }
 
     private void validateProductName(Products products, String name) {
@@ -30,68 +36,51 @@ public class Order {
         }
     }
 
-    public void checkPromotionForOrder(Promotions promotions) {
-        for (Product product : products) {
-            String promotionName = product.getPromotion();
-            if (!"null".equals(promotionName)) {
-                this.promotion = promotions.getPromotionByName(promotionName);
+    public String getPromotionName() {
+        return products.getPromotionName();
+    }
+
+    public void reduceStock() {
+        this.purchasedQuantities = products.reduceStock(quantity);
+
+        if (!onlyGeneralPromotion()) {
+            this.freeMoreQuantity = getFreeMore(purchasedQuantities.getFirst());
+        }
+    }
+
+    public boolean onlyGeneralPromotion() {
+        return promotion == null;
+    }
+
+    private int getFreeMore(int orderQuantity) {
+        if (orderQuantity % (promotion.getBuy() + promotion.getFree()) == 0) {
+            return 0;
+        }
+        return promotion.getFree();
+    }
+
+    public OrderItemDTO toDTO() {
+        int pricePerProduct = products.getPricePerProduct();
+        int orderedPromotionQuantity = purchasedQuantities.getFirst();
+        int orderedNotPromotionQuantity = purchasedQuantities.getLast();
+        int notApplicablePromotionQuantity = 0;
+        int freeQuantity = 0;
+        if (promotion != null) {
+            if (promotion.getBuy() == 2) {
+                notApplicablePromotionQuantity
+                        = orderedPromotionQuantity % (promotion.getBuy() + promotion.getFree())
+                        + orderedNotPromotionQuantity;
             }
-        }
-    }
 
-    public void processOrder() {
-        int remainingQuantity = quantity;
-
-        if (promotion != null && promotion.inPromotionPeriod()) {
-            Product onPromotionProduct = products.getOnPromotionProduct();
-            int onPromotionStock = onPromotionProduct.getStock();
-
-//            int buy = promotion.getBuy();
-//            int free = promotion.getFree();
-//
-//            if (remainingQuantity < buy + free) {
-//                System.out.println("현재 오렌지주스은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
-//            }
-
-            remainingQuantity = getRemainingQuantity(remainingQuantity, onPromotionProduct, onPromotionStock);
-        }
-
-        if (products.getGeneralProduct() != null) {
-            Product generalProduct = products.getGeneralProduct();
-            int generalStock = generalProduct.getStock();
-
-            if (remainingQuantity > 0) {
-                remainingQuantity = getRemainingQuantity(remainingQuantity, generalProduct, generalStock);
+            if (promotion.getBuy() == 1) {
+                notApplicablePromotionQuantity = orderedNotPromotionQuantity;
             }
-        }
-        System.out.println(products);
-    }
 
-    private int getRemainingQuantity(int remainingQuantity, Product product, int stock) {
-        if (stock > 0 && stock >= quantity) {
-            product.reduceStock(quantity);
-            remainingQuantity -= quantity;
+            freeQuantity = orderedPromotionQuantity / (promotion.getBuy() + promotion.getFree());
         }
 
-        if (stock > 0 && stock < quantity) {
-            product.reduceStock(stock);
-            remainingQuantity -= stock;
-        }
-        return remainingQuantity;
-    }
-
-    public int getPurchaseAmount() {
-        Product generalProduct = products.getGeneralProduct();
-        int generalProductPrice = generalProduct.getPrice();
-        return generalProductPrice * quantity;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getQuantity() {
-        return quantity;
+        return new OrderItemDTO(name, quantity, pricePerProduct, orderedPromotionQuantity,
+                orderedNotPromotionQuantity, freeMoreQuantity, notApplicablePromotionQuantity, freeQuantity);
     }
 
     @Override

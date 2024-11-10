@@ -1,14 +1,12 @@
 package store.util;
 
-import java.util.function.Supplier;
-
 public class RetryHandler {
-    public <T> T repeat(Supplier<T> supplier) {
+    public void repeat(Runnable runnable) {
         try {
-            return supplier.get();
+            runnable.run();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            return repeat(supplier);
+            repeat(runnable);
         }
     }
 }

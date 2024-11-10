@@ -10,13 +10,15 @@ import java.util.List;
 
 public class ProductService {
     private final ProductDAO productDAO;
+    private Products products;
 
     public ProductService(ProductDAO productDAO) {
         this.productDAO = productDAO;
     }
 
     public Products getAllProducts() {
-        return new Products(productDAO.selectAllProducts());
+        this.products = new Products(productDAO.selectAllProducts());
+        return products;
     }
 
     public List<ProductDTO> getAllProductsDTO(Products products) {
@@ -33,5 +35,15 @@ public class ProductService {
             ProductDTO tempDTO = new ProductDTO(productDTO.getName(), productDTO.getPrice(), 0, "");
             productsDTO.add(tempDTO);
         }
+    }
+
+    public void reduceStockForFree(String productName, int freeMoreQuantity) {
+        products.reduceStockForFree(productName, freeMoreQuantity);
+    }
+
+    public void resetStockForNotApplicablePromotion(String productName, int orderedPromotionQuantity,
+                                                    int orderedNotPromotionQuantity) {
+        products.resetStockForNotApplicablePromotion(productName, orderedPromotionQuantity,
+                orderedNotPromotionQuantity);
     }
 }

@@ -29,8 +29,24 @@ public class Product {
         return new ProductDTO(this.name, this.price, this.stock, this.promotion);
     }
 
-    public void reduceStock(int orderQuantity) {
+    public int reduceStock(int orderQuantity) {
+        if (onPromotion() && this.stock < orderQuantity) {
+            int remainingStock = orderQuantity - this.stock;
+            this.stock = 0;
+            return remainingStock;
+        }
+
+        int remainingStock = - orderQuantity;
         this.stock -= orderQuantity;
+        return remainingStock;
+    }
+
+    public void reduceStockForFree(int freeMoreQuantity) {
+        this.stock -= freeMoreQuantity;
+    }
+
+    public void resetStockForNotPurchase(int notPurchasedQuantity) {
+        this.stock += notPurchasedQuantity;
     }
 
     public int getPrice() {

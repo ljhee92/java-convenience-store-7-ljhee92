@@ -7,19 +7,16 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 public class Promotions implements Iterable<Promotion> {
-    private List<Promotion> promotions;
+    private final List<Promotion> promotions;
 
     public Promotions(List<Promotion> promotions) {
         this.promotions = new ArrayList<>(promotions);
     }
 
-    public void add(Promotion promotion) {
-        promotions.add(promotion);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
+    public Promotion getPromotionByName(String promotionName) {
+        return promotions.stream().filter(promotion -> promotion.exist(promotionName))
+                .filter(Promotion::inPromotionPeriod)
+                .findFirst().orElse(null);
     }
 
     @Override
@@ -35,5 +32,12 @@ public class Promotions implements Iterable<Promotion> {
     @Override
     public Iterator<Promotion> iterator() {
         return promotions.iterator();
+    }
+
+    @Override
+    public String toString() {
+        return "Promotions{" +
+                "promotions=" + promotions +
+                '}';
     }
 }
