@@ -49,31 +49,45 @@ public class Products implements Iterable<Product> {
     public List<Integer> reduceStock(int orderQuantity) {
         List<Integer> purchasedQuantities = new ArrayList<>();
 
-        int remainingQuantity = products.getFirst().reduceStock(orderQuantity);
+        int remainingQuantity = reducePromotionStock(purchasedQuantities, orderQuantity);
+        reduceGeneralStock(purchasedQuantities, orderQuantity, remainingQuantity);
 
+        adjustQuantitiesWhenOnlyHasGeneral(purchasedQuantities, remainingQuantity);
+        adjustQuantitiesWhenOnlHasPromotion(purchasedQuantities, remainingQuantity);
+
+        return purchasedQuantities;
+    }
+
+    private int reducePromotionStock(List<Integer> purchasedQuantities, int orderQuantity) {
+        int remainingQuantity = products.getFirst().reduceStock(orderQuantity);
         if (remainingQuantity < 0) {
             purchasedQuantities.add(-remainingQuantity);
             purchasedQuantities.add(0);
         }
+        return remainingQuantity;
+    }
 
+    private void reduceGeneralStock(List<Integer> purchasedQuantities, int orderQuantity, int remainingQuantity) {
         if (remainingQuantity >= 0) {
             purchasedQuantities.add(orderQuantity - remainingQuantity);
             remainingQuantity = products.getLast().reduceStock(remainingQuantity);
             purchasedQuantities.add(-remainingQuantity);
         }
+    }
 
+    private void adjustQuantitiesWhenOnlyHasGeneral(List<Integer> purchasedQuantities, int remainingQuantity) {
         if (products.size() == 1) {
             purchasedQuantities.removeFirst();
             purchasedQuantities.add(-remainingQuantity);
         }
+    }
 
+    private void adjustQuantitiesWhenOnlHasPromotion(List<Integer> purchasedQuantities, int remainingQuantity) {
         if (onlyHasOnPromotion(products.getFirst())) {
             purchasedQuantities.clear();
             purchasedQuantities.add(-remainingQuantity);
             purchasedQuantities.add(0);
         }
-
-        return purchasedQuantities;
     }
 
     public int getPricePerProduct() {
@@ -99,6 +113,10 @@ public class Products implements Iterable<Product> {
                 product.resetStockForNotPurchase(orderedNotPromotionQuantity);
             }
         }
+    }
+
+    public int size() {
+        return products.size();
     }
 
     @Override

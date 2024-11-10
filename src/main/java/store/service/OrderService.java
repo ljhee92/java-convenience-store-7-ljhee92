@@ -18,21 +18,25 @@ public class OrderService {
     public void takeOrders(List<List<String>> inputOrders, Products products, Promotions promotions) {
         orders = new Orders(new ArrayList<>());
         inputOrders.forEach(inputOrder -> {
-
             String name = inputOrder.getFirst();
             int quantity = Parser.stringToInt(inputOrder.getLast());
-            Order order = new Order(name, quantity, products, promotions);
 
+            Order order = new Order(name, quantity, products, promotions);
             orders.add(order);
         });
     }
 
-    public List<OrderItemDTO> progressOrders() {
+    public List<OrderItemDTO> processOrders() {
         return orders.reduceStock();
     }
 
     public ReceiptDTO createReceipt(List<OrderItemDTO> orderItemsDTO) {
         Receipt receipt = new Receipt(orderItemsDTO);
         return receipt.toDTO();
+    }
+
+    public void applyOffDiscountForMembership(ReceiptDTO receiptDTO) {
+        receiptDTO.setMoneyForPay(receiptDTO.getDiscountForMembership() + receiptDTO.getMoneyForPay());
+        receiptDTO.setDiscountForMembership(0);
     }
 }

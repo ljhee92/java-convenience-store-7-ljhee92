@@ -2,6 +2,7 @@ package store.controller;
 
 import store.domain.Products;
 import store.domain.Promotions;
+import store.domain.Receipt;
 import store.dto.OrderItemDTO;
 import store.dto.ProductDTO;
 import store.dto.ReceiptDTO;
@@ -37,14 +38,10 @@ public class StoreController {
         Promotions promotions = promotionService.getAllPromotions();
 
         welcomeGreetingAndTakeOrder(products, promotions);
-        progressDiscount();
+        ReceiptDTO receiptDTO = processOrder();
+        outputView.displayReceipt(receiptDTO);
 
-        retryHandler.repeat(() -> {
-            while (inputView.acceptReOrder()) {
-                retryHandler.repeat(() -> welcomeGreetingAndTakeOrder(products, promotions));
-                progressDiscount();
-            }
-        });
+        repeatUntilExit(products, promotions);
     }
 
     private void welcomeGreetingAndTakeOrder(Products products, Promotions promotions) {
@@ -58,18 +55,15 @@ public class StoreController {
         orderService.takeOrders(inputOrders, products, promotions);
     }
 
-    private void progressDiscount() {
-        List<OrderItemDTO> orderItemsDTO = orderService.progressOrders();
+    private ReceiptDTO processOrder() {
+        List<OrderItemDTO> orderItemsDTO = orderService.processOrders();
 
-        for (OrderItemDTO orderItemDTO : orderItemsDTO) {
-            checkFreeMore(orderItemDTO);
-            checkNotApplicablePromotion(orderItemDTO);
-        }
+        orderItemsDTO.forEach(orderItemDTO -> {
+            retryHandler.repeat(() -> checkFreeMore(orderItemDTO));
+            retryHandler.repeat(() -> checkNotApplicablePromotion(orderItemDTO));
+        });
 
-        if (!inputView.acceptApplicabilityForMembership()) {
-            ReceiptDTO receiptDTO = orderService.createReceipt(orderItemsDTO);
-            outputView.displayReceipt(receiptDTO);
-        }
+        return retryHandler.repeat(() -> checkMembershipDiscount(orderItemsDTO));
     }
 
     private void checkFreeMore(OrderItemDTO orderItemDTO) {
@@ -89,5 +83,24 @@ public class StoreController {
                         orderItemDTO.getOrderedNotPromotionQuantity());
             }
         }
+    }
+
+    private ReceiptDTO checkMembershipDiscount(List<OrderItemDTO> orderItemsDTO) {
+//        System.out.println(orderItemsDTO);
+        ReceiptDTO receiptDTO = orderService.createReceipt(orderItemsDTO);
+        if (!inputView.acceptApplicabilityForMembership()) {
+            orderService.applyOffDiscountForMembership(receiptDTO);
+        }
+        return receiptDTO;
+    }
+
+    private void repeatUntilExit(Products products, Promotions promotions) {
+        retryHandler.repeat(() -> {
+            while (inputView.acceptReOrder()) {
+                retryHandler.repeat(() -> welcomeGreetingAndTakeOrder(products, promotions));
+                ReceiptDTO receiptDTO = processOrder();
+                outputView.displayReceipt(receiptDTO);
+            }
+        });
     }
 }

@@ -60,6 +60,7 @@ public class Order {
     }
 
     public OrderItemDTO toDTO() {
+        int totalQuantity = quantity;
         int pricePerProduct = products.getPricePerProduct();
         int orderedPromotionQuantity = purchasedQuantities.getFirst();
         int orderedNotPromotionQuantity = purchasedQuantities.getLast();
@@ -70,16 +71,26 @@ public class Order {
                 notApplicablePromotionQuantity
                         = orderedPromotionQuantity % (promotion.getBuy() + promotion.getFree())
                         + orderedNotPromotionQuantity;
+
+                if (orderedPromotionQuantity == 2) {
+                    notApplicablePromotionQuantity
+                            = orderedNotPromotionQuantity;
+                }
             }
 
             if (promotion.getBuy() == 1) {
-                notApplicablePromotionQuantity = orderedNotPromotionQuantity;
+                notApplicablePromotionQuantity = orderedPromotionQuantity;
+                totalQuantity += orderedPromotionQuantity;
             }
 
             freeQuantity = orderedPromotionQuantity / (promotion.getBuy() + promotion.getFree());
+
+            if (products.size() == 1) {
+                freeQuantity =1;
+            }
         }
 
-        return new OrderItemDTO(name, quantity, pricePerProduct, orderedPromotionQuantity,
+        return new OrderItemDTO(name, totalQuantity, pricePerProduct, orderedPromotionQuantity,
                 orderedNotPromotionQuantity, freeMoreQuantity, notApplicablePromotionQuantity, freeQuantity);
     }
 
