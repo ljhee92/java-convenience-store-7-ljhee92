@@ -1,5 +1,6 @@
 package store.view;
 
+import store.dto.OrderItemDTO;
 import store.exception.InvalidInputException;
 import store.exception.ProductFormatException;
 import store.util.Parser;
@@ -37,11 +38,40 @@ public class InputView extends UserInputReader {
         return orderItems;
     }
 
-    public String requestReOrder() {
+    public boolean acceptFreeMore(OrderItemDTO orderItemDTO) {
+        System.out.println();
+        System.out.println("현재 " + orderItemDTO.getName() + "은(는) " +
+                (orderItemDTO.getFreeMoreQuantity() + orderItemDTO.getOrderedNotPromotionQuantity()) +
+                "개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
+        String inputFreeMore = inputMessage();
+        validateYesOrNoFormat(inputFreeMore);
+        return "Y".equals(inputFreeMore);
+    }
+
+    public boolean acceptApplicabilityForPromotion(OrderItemDTO orderItemDTO) {
+        System.out.println();
+        System.out.println("현재 " + orderItemDTO.getName() + "은(는) " +
+                (orderItemDTO.getNotApplicablePromotionQuantity()) +
+                "개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)");
+        String applicabilityForPromotion = inputMessage();
+        validateYesOrNoFormat(applicabilityForPromotion);
+        return "Y".equals(applicabilityForPromotion);
+    }
+
+    public boolean acceptApplicabilityForMembership() {
+        System.out.println();
+        System.out.println("멤버십 할인을 받으시겠습니까? (Y/N)");
+        String applicabilityForMembership = inputMessage();
+        validateYesOrNoFormat(applicabilityForMembership);
+        return "Y".equals(applicabilityForMembership);
+    }
+
+    public boolean acceptReOrder() {
+        System.out.println();
         System.out.println("감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
         String inputReOrder = inputMessage();
         validateYesOrNoFormat(inputReOrder);
-        return inputReOrder;
+        return "Y".equals(inputReOrder);
     }
 
     private void validateYesOrNoFormat(String inputYesOrNo) {
