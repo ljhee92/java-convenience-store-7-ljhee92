@@ -4,7 +4,7 @@ public class OrderItemDTO {
     private final String name;
     private final int totalQuantity;
     private final double pricePerProduct;
-    private final int orderedPromotionQuantity;
+    private int orderedPromotionQuantity;
     private final int orderedNotPromotionQuantity;
     private final int freeMoreQuantity;
     private final int notApplicablePromotionQuantity;
@@ -53,6 +53,10 @@ public class OrderItemDTO {
 
     public int getFreeQuantity() {
         return freeQuantity;
+    }
+
+    public void setOrderedPromotionQuantity(int orderedPromotionQuantity) {
+        this.orderedPromotionQuantity = orderedPromotionQuantity;
     }
 
     @Override

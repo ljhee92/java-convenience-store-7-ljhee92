@@ -2,7 +2,6 @@ package store.controller;
 
 import store.domain.Products;
 import store.domain.Promotions;
-import store.domain.Receipt;
 import store.dto.OrderItemDTO;
 import store.dto.ProductDTO;
 import store.dto.ReceiptDTO;
@@ -79,14 +78,14 @@ public class StoreController {
                 && orderItemDTO.getTotalQuantity() > orderItemDTO.getOrderedPromotionQuantity()) {
             if (!inputView.acceptApplicabilityForPromotion(orderItemDTO)) {
                 productService.resetStockForNotApplicablePromotion(orderItemDTO.getName(),
-                        orderItemDTO.getOrderedPromotionQuantity(),
-                        orderItemDTO.getOrderedNotPromotionQuantity());
+                        orderItemDTO.getOrderedPromotionQuantity(), orderItemDTO.getOrderedNotPromotionQuantity());
             }
+            orderItemDTO.setOrderedPromotionQuantity(orderItemDTO.getOrderedPromotionQuantity() +
+                    orderItemDTO.getFreeMoreQuantity());
         }
     }
 
     private ReceiptDTO checkMembershipDiscount(List<OrderItemDTO> orderItemsDTO) {
-//        System.out.println(orderItemsDTO);
         ReceiptDTO receiptDTO = orderService.createReceipt(orderItemsDTO);
         if (!inputView.acceptApplicabilityForMembership()) {
             orderService.applyOffDiscountForMembership(receiptDTO);
