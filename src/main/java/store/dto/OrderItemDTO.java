@@ -82,17 +82,4 @@ public class OrderItemDTO {
                 ", freeQuantity=" + freeQuantity +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderItemDTO that = (OrderItemDTO) o;
-        return totalQuantity == that.totalQuantity && Double.compare(pricePerProduct, that.pricePerProduct) == 0 && orderedPromotionQuantity == that.orderedPromotionQuantity && orderedNotPromotionQuantity == that.orderedNotPromotionQuantity && freeMoreQuantity == that.freeMoreQuantity && notApplicablePromotionQuantity == that.notApplicablePromotionQuantity && freeQuantity == that.freeQuantity && Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, totalQuantity, pricePerProduct, orderedPromotionQuantity, orderedNotPromotionQuantity, freeMoreQuantity, notApplicablePromotionQuantity, freeQuantity);
-    }
 }
