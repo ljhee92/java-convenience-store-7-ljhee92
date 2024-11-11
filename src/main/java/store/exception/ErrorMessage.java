@@ -8,7 +8,8 @@ public enum ErrorMessage {
     INVALID_PRODUCT_FORMAT_EXCEPTION("올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.")
     ;
 
-    private final String prefix = "[ERROR] ";
+    private static final String prefix = "[ERROR] ";
+
     private final String message;
 
     ErrorMessage(String message) {

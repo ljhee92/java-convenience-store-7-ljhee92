@@ -7,7 +7,7 @@ import store.util.OutputWriter;
 import java.util.List;
 
 public class OutputView implements OutputWriter {
-    private final int ZERO = 0;
+    private static final int ZERO = 0;
 
     public void displayWelcomeAndProducts(List<ProductDTO> productsDTO) {
         displayFormat("%s%n", "안녕하세요. W편의점입니다.");

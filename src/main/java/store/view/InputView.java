@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class InputView implements UserInputReader, OutputWriter {
-    private final Pattern INPUT_ORDER_FORMAT = Pattern.compile("^(\\[[가-힣]+-[0-9]+])(,(\\[[가-힣]+-[0-9]+]))*$");
-    private final String YES = "Y";
-    private final String NO = "N";
+    private static final Pattern INPUT_ORDER_FORMAT = Pattern.compile("^(\\[[가-힣]+-[0-9]+])(,(\\[[가-힣]+-[0-9]+]))*$");
+    private static final String YES = "Y";
+    private static final String NO = "N";
 
     public List<List<String>> requestOrder() {
         displayMessage("구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])");

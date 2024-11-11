@@ -3,8 +3,8 @@ package store.domain;
 public enum RatioDiscount implements DiscountStrategy {
     MEMBERSHIP(30);
 
-    private static final int ONE = 1;
     private static final double PERCENTAGE = 0.01;
+    private static final int MINIMUM_DISCOUNT_AMOUNT = 8_000;
 
     private final double discountRatio;
 
@@ -16,9 +16,10 @@ public enum RatioDiscount implements DiscountStrategy {
     public double getDiscountPrice(double price) {
         double discountForMembership = price * (discountRatio * PERCENTAGE);
 
-        if (discountForMembership > 8000) {
-            discountForMembership = 8000;
+        if (discountForMembership > MINIMUM_DISCOUNT_AMOUNT) {
+            discountForMembership = MINIMUM_DISCOUNT_AMOUNT;
         }
+
         return discountForMembership;
     }
 }
