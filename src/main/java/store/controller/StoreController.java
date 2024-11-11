@@ -52,7 +52,7 @@ public class StoreController {
 
     private void takeOrders(Products products, Promotions promotions) {
         List<List<String>> inputOrders = inputView.requestOrder();
-        orderService.takeOrders(inputOrders, products, promotions);
+        orderService.createOrders(inputOrders, products, promotions);
     }
 
     private ReceiptDTO processOrder() {
@@ -77,9 +77,9 @@ public class StoreController {
     private void checkNotApplicablePromotion(OrderItemDTO orderItemDTO) {
         if (orderItemDTO.getNotApplicablePromotionQuantity() != ZERO) {
             if (!inputView.acceptApplicabilityForPromotion(orderItemDTO)) {
-                productService.resetStockForNotApplicablePromotion(orderItemDTO.getName(),
-                        orderItemDTO.getOrderedPromotionQuantity(), orderItemDTO.getOrderedNotPromotionQuantity());
+                productService.resetStockForNotApplicablePromotion(orderItemDTO);
             }
+
             orderItemDTO.setOrderedPromotionQuantity(orderItemDTO.getOrderedPromotionQuantity() +
                     orderItemDTO.getFreeMoreQuantity());
         }
@@ -88,8 +88,9 @@ public class StoreController {
     private ReceiptDTO checkMembershipDiscount(List<OrderItemDTO> orderItemsDTO) {
         ReceiptDTO receiptDTO = orderService.createReceipt(orderItemsDTO);
         if (!inputView.acceptApplicabilityForMembership()) {
-            orderService.applyOffDiscountForMembership(receiptDTO);
+            orderService.disableDiscountForMembership(receiptDTO);
         }
+
         return receiptDTO;
     }
 

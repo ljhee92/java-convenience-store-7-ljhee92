@@ -1,7 +1,8 @@
 package store.domain;
 
 public enum RatioDiscount implements DiscountStrategy {
-    MEMBERSHIP(30);
+    MEMBERSHIP(30)
+    ;
 
     private static final double PERCENTAGE = 0.01;
     private static final int MINIMUM_DISCOUNT_AMOUNT = 8_000;

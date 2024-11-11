@@ -13,9 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
+    private static final int ZERO = 0;
     private Orders orders;
 
-    public void takeOrders(List<List<String>> inputOrders, Products products, Promotions promotions) {
+    public void createOrders(List<List<String>> inputOrders, Products products, Promotions promotions) {
         orders = new Orders(new ArrayList<>());
         inputOrders.forEach(inputOrder -> {
             String name = inputOrder.getFirst();
@@ -35,8 +36,8 @@ public class OrderService {
         return receipt.toDTO();
     }
 
-    public void applyOffDiscountForMembership(ReceiptDTO receiptDTO) {
+    public void disableDiscountForMembership(ReceiptDTO receiptDTO) {
         receiptDTO.setMoneyForPay(receiptDTO.getDiscountForMembership() + receiptDTO.getMoneyForPay());
-        receiptDTO.setDiscountForMembership(0);
+        receiptDTO.setDiscountForMembership(ZERO);
     }
 }

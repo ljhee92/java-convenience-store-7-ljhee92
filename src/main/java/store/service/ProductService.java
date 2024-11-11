@@ -3,6 +3,7 @@ package store.service;
 import store.dao.ProductDAO;
 import store.domain.Product;
 import store.domain.Products;
+import store.dto.OrderItemDTO;
 import store.dto.ProductDTO;
 
 import java.util.ArrayList;
@@ -41,8 +42,11 @@ public class ProductService {
         products.reduceStockForFree(productName, freeMoreQuantity);
     }
 
-    public void resetStockForNotApplicablePromotion(String productName, int orderedPromotionQuantity,
-                                                    int orderedNotPromotionQuantity) {
+    public void resetStockForNotApplicablePromotion(OrderItemDTO orderItemDTO) {
+        String productName = orderItemDTO.getName();
+        int orderedPromotionQuantity = orderItemDTO.getOrderedPromotionQuantity();
+        int orderedNotPromotionQuantity = orderItemDTO.getOrderedNotPromotionQuantity();
+
         products.resetStockForNotApplicablePromotion(productName, orderedPromotionQuantity,
                 orderedNotPromotionQuantity);
     }
