@@ -14,6 +14,51 @@
 
 ## 📁 디렉토리 구조
 ```
+├── Application.java : 어플리케이션 실행
+├── config
+│   └── AppConfig.java : 의존성 주입
+├── controller
+│   └── StoreController.java : 프로그램 전체 흐름 조절
+├── dao
+│   ├── ProductDAO.java : 상품 파일 접근
+│   └── PromotionDAO.java : 프로모션 파일 접근
+├── domain
+│   ├── DiscountStrategy.java : 할인 전략 인터페이스
+│   ├── Order.java : 주문 처리, 주문 정보 관리
+│   ├── Orders.java : 주문 리스트 관리
+│   ├── Product.java : 상품 정보, 재고 관리
+│   ├── Products.java : 상품 리스트 관리
+│   ├── Promotion.java : 프로모션 정보 관리
+│   ├── Promotions.java : 프로모션 리스트 관리
+│   ├── RatioDiscount.java : 비율 할인 계산 enum
+│   └── Receipt.java : 영수증 생성
+├── dto
+│   ├── OrderItemDTO.java : 뷰에 표시되는 주문 정보 객체
+│   ├── ProductDTO.java : 뷰에 표시되는 상품 정보 객체
+│   └── ReceiptDTO.java : 뷰에 표시되는 영수증 객체
+├── exception
+│   ├── ErrorMessage.java : 예외 메시지 enum
+│   ├── FileReadException.java : 파일 읽기 예외
+│   ├── InsufficientQuantityException.java : 재고 부족 예외
+│   ├── InvalidInputException.java : 잘못된 입력값 예외
+│   ├── InvalidProductFormatException.java : 상품 주문 입력 포맷 예외
+│   └── NotExistProductException.java : 존재하지 않는 상품 예외
+├── mapper
+│   ├── ProductMapper.java : 읽어들인 파일 정보를 상품 객체로 매핑
+│   └── PromotionMapper.java : 읽어들인 파일 정보를 프로모션 객체로 매핑
+├── service
+│   ├── OrderService.java : 주문 처리 비즈니스 로직
+│   ├── ProductService.java : 상품 재고 처리 비즈니스 로직
+│   └── PromotionService.java : 프로모션 정보 비즈니스 로직
+├── util
+│   ├── FileInputReader.java : 파일 읽기
+│   ├── OutputWriter.java : 메시지 출력
+│   ├── Parser.java : 파싱
+│   ├── RetryHandler.java : 재입력 조절
+│   └── UserInputReader.java : 사용자 입력 수신
+└── view
+    ├── InputView.java : 사용자 입력 뷰
+    └── OutputView.java : 사용자 출력 뷰
 ```
 
 ## 💻 프로그램 진행 순서
