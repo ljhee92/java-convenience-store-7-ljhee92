@@ -61,6 +61,22 @@ class ApplicationTest extends NsTest {
         });
     }
 
+    @Test
+    void 프로모션_할인이_적용되지_않는_상품은_구매하지_않겠다고_할_때() {
+        assertSimpleTest(() -> {
+            run("[사이다-15]", "N", "N", "N");
+            assertThat(output().replaceAll("\\s", "")).contains("사이다6", "내실돈3,000");
+        });
+    }
+
+    @Test
+    void 무료_증정_상품을_받지_않겠다고_할_때() {
+        assertSimpleTest(() -> {
+           run("[오렌지주스-1]", "N", "N", "N");
+           assertThat(output().replaceAll("\\s", "")).contains("오렌지주스1", "내실돈1,800");
+        });
+    }
+
     @Override
     public void runMain() {
         Application.main(new String[]{});

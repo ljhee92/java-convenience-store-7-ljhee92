@@ -15,6 +15,7 @@ import java.util.List;
 public class OrderService {
     private static final int ZERO = 0;
     private Orders orders;
+    private Receipt receipt;
 
     public void createOrders(List<List<String>> inputOrders, Products products, Promotions promotions) {
         orders = new Orders(new ArrayList<>());
@@ -32,12 +33,22 @@ public class OrderService {
     }
 
     public ReceiptDTO createReceipt(List<OrderItemDTO> orderItemsDTO) {
-        Receipt receipt = new Receipt(orderItemsDTO);
+        receipt = new Receipt(orderItemsDTO);
         return receipt.toDTO();
     }
 
     public void disableDiscountForMembership(ReceiptDTO receiptDTO) {
         receiptDTO.setMoneyForPay(receiptDTO.getDiscountForMembership() + receiptDTO.getMoneyForPay());
         receiptDTO.setDiscountForMembership(ZERO);
+    }
+
+    public void processApplicablePromotionQuantity(OrderItemDTO orderItemDTO) {
+        orderItemDTO.setOrderedPromotionQuantity(orderItemDTO.getOrderedPromotionQuantity() +
+                orderItemDTO.getFreeMoreQuantity());
+    }
+
+    public void processNotApplicablePromotionQuantity(OrderItemDTO orderItemDTO) {
+        orderItemDTO.setTotalQuantity(
+                orderItemDTO.getTotalQuantity() - orderItemDTO.getNotApplicablePromotionQuantity());
     }
 }

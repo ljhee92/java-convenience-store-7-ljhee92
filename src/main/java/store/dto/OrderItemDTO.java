@@ -1,14 +1,16 @@
 package store.dto;
 
+import java.util.Objects;
+
 public class OrderItemDTO {
     private final String name;
-    private final int totalQuantity;
+    private int totalQuantity;
     private final double pricePerProduct;
     private int orderedPromotionQuantity;
     private final int orderedNotPromotionQuantity;
     private final int freeMoreQuantity;
     private final int notApplicablePromotionQuantity;
-    private final int freeQuantity;
+    private int freeQuantity;
 
     public OrderItemDTO(String name, int totalQuantity, double pricePerProduct,
                         int orderedPromotionQuantity, int orderedNotPromotionQuantity, int freeMoreQuantity,
@@ -55,6 +57,14 @@ public class OrderItemDTO {
         return freeQuantity;
     }
 
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
+    public void setFreeQuantity(int freeQuantity) {
+        this.freeQuantity = freeQuantity;
+    }
+
     public void setOrderedPromotionQuantity(int orderedPromotionQuantity) {
         this.orderedPromotionQuantity = orderedPromotionQuantity;
     }
@@ -71,5 +81,18 @@ public class OrderItemDTO {
                 ", notApplicablePromotionQuantity=" + notApplicablePromotionQuantity +
                 ", freeQuantity=" + freeQuantity +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItemDTO that = (OrderItemDTO) o;
+        return totalQuantity == that.totalQuantity && Double.compare(pricePerProduct, that.pricePerProduct) == 0 && orderedPromotionQuantity == that.orderedPromotionQuantity && orderedNotPromotionQuantity == that.orderedNotPromotionQuantity && freeMoreQuantity == that.freeMoreQuantity && notApplicablePromotionQuantity == that.notApplicablePromotionQuantity && freeQuantity == that.freeQuantity && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, totalQuantity, pricePerProduct, orderedPromotionQuantity, orderedNotPromotionQuantity, freeMoreQuantity, notApplicablePromotionQuantity, freeQuantity);
     }
 }

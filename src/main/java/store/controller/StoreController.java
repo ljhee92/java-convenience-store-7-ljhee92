@@ -16,6 +16,8 @@ import java.util.List;
 
 public class StoreController {
     private static final int ZERO = 0;
+    private static final String YES = "Y";
+    private static final String NO = "N";
     private final InputView inputView;
     private final OutputView outputView;
     private final RetryHandler retryHandler;
@@ -68,20 +70,28 @@ public class StoreController {
 
     private void checkFreeMore(OrderItemDTO orderItemDTO) {
         if (orderItemDTO.getFreeMoreQuantity() != ZERO) {
-            if (inputView.acceptFreeMore(orderItemDTO)) {
+            String answer = inputView.acceptFreeMore(orderItemDTO);
+            if (YES.equals(answer)) {
                 productService.reduceStockForFree(orderItemDTO.getName(), orderItemDTO.getFreeMoreQuantity());
+                orderItemDTO.setTotalQuantity(orderItemDTO.getTotalQuantity() + orderItemDTO.getFreeMoreQuantity());
+            }
+            if (NO.equals(answer)) {
+                orderItemDTO.setFreeQuantity(ZERO);
             }
         }
     }
 
     private void checkNotApplicablePromotion(OrderItemDTO orderItemDTO) {
         if (orderItemDTO.getNotApplicablePromotionQuantity() != ZERO) {
-            if (!inputView.acceptApplicabilityForPromotion(orderItemDTO)) {
-                productService.resetStockForNotApplicablePromotion(orderItemDTO);
+            String answer = inputView.acceptApplicabilityForPromotion(orderItemDTO);
+            if (YES.equals(answer)) {
+                orderService.processApplicablePromotionQuantity(orderItemDTO);
             }
 
-            orderItemDTO.setOrderedPromotionQuantity(orderItemDTO.getOrderedPromotionQuantity() +
-                    orderItemDTO.getFreeMoreQuantity());
+            if (NO.equals(answer)) {
+                productService.resetStockForNotApplicablePromotion(orderItemDTO);
+                orderService.processNotApplicablePromotionQuantity(orderItemDTO);
+            }
         }
     }
 

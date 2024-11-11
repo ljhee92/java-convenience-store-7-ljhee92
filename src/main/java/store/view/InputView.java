@@ -48,24 +48,24 @@ public class InputView implements UserInputReader, OutputWriter {
         return orderItems;
     }
 
-    public boolean acceptFreeMore(OrderItemDTO orderItemDTO) {
+    public String acceptFreeMore(OrderItemDTO orderItemDTO) {
         displayFormat("%n현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)%n", orderItemDTO.getName(),
                 (orderItemDTO.getFreeMoreQuantity() + orderItemDTO.getOrderedNotPromotionQuantity()));
 
         String inputFreeMore = inputMessage();
         validateYesOrNoFormat(inputFreeMore);
 
-        return YES.equals(inputFreeMore);
+        return inputFreeMore;
     }
 
-    public boolean acceptApplicabilityForPromotion(OrderItemDTO orderItemDTO) {
+    public String acceptApplicabilityForPromotion(OrderItemDTO orderItemDTO) {
         displayFormat("%n현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)%n",
                 orderItemDTO.getName(), orderItemDTO.getNotApplicablePromotionQuantity());
 
         String applicabilityForPromotion = inputMessage();
         validateYesOrNoFormat(applicabilityForPromotion);
 
-        return YES.equals(applicabilityForPromotion);
+        return applicabilityForPromotion;
     }
 
     public boolean acceptApplicabilityForMembership() {

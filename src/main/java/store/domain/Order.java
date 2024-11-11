@@ -66,8 +66,13 @@ public class Order {
     }
 
     private int calculateFreeQuantity(int orderedPromotionQuantity) {
-        return (orderedPromotionQuantity + this.promotion.getFree())
-                / (this.promotion.getBuy() + this.promotion.getFree());
+        int freeQuantity = orderedPromotionQuantity / (this.promotion.getBuy() + this.promotion.getFree());
+
+        if (this.products.isEmptyGeneralStock()) {
+            freeQuantity = (orderedPromotionQuantity + this.promotion.getFree())
+                    / (this.promotion.getBuy() + this.promotion.getFree());
+        }
+        return freeQuantity;
     }
 
     public OrderItemDTO toDTO() {
@@ -81,10 +86,6 @@ public class Order {
             notApplicablePromotionQuantity
                     = calculateNotApplicablePromotionQuantity(orderedPromotionQuantity, orderedGeneralQuantity);
             freeQuantity = calculateFreeQuantity(orderedPromotionQuantity);
-        }
-
-        if (products.isEmptyGeneralStock()) {
-            this.quantity += freeQuantity;
         }
 
         return new OrderItemDTO(this.name, this.quantity, products.getPricePerProduct(), orderedPromotionQuantity,
