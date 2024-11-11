@@ -13,7 +13,7 @@ public enum RatioDiscount implements DiscountStrategy {
     }
 
     @Override
-    public double getDiscountPrice(double price) {
+    public double calculateDiscountPrice(double price) {
         double discountForMembership = price * (discountRatio * PERCENTAGE);
 
         if (discountForMembership > MINIMUM_DISCOUNT_AMOUNT) {

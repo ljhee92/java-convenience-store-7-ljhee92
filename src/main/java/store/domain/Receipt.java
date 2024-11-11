@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Receipt {
+    private static final int ZERO = 0;
     private final List<OrderItemDTO> orderItemsDTO;
     private final RatioDiscount ratioDiscount = RatioDiscount.MEMBERSHIP;
 
@@ -15,7 +16,7 @@ public class Receipt {
     }
 
     private int calculateTotalQuantity() {
-        int totalQuantity = 0;
+        int totalQuantity = ZERO;
         for (OrderItemDTO orderItemDTO : orderItemsDTO) {
             totalQuantity += orderItemDTO.getTotalQuantity();
         }
@@ -23,7 +24,7 @@ public class Receipt {
     }
 
     private double calculateTotalPrice() {
-        double totalPrice = 0;
+        double totalPrice = ZERO;
         for (OrderItemDTO orderItemDTO : orderItemsDTO) {
             totalPrice += orderItemDTO.getTotalQuantity() * orderItemDTO.getPricePerProduct();
         }
@@ -31,7 +32,7 @@ public class Receipt {
     }
 
     private double calculateDiscountForPromotion() {
-        double discountForPromotion = 0;
+        double discountForPromotion = ZERO;
         for (OrderItemDTO orderItemDTO : orderItemsDTO) {
             discountForPromotion += orderItemDTO.getFreeQuantity() * orderItemDTO.getPricePerProduct();
         }
@@ -40,13 +41,15 @@ public class Receipt {
 
     private double calculateDiscountForMembership() {
         double totalPrice = calculateTotalPrice();
-        double beforeDiscountForPromotion = 0;
+        double beforeDiscountForPromotion = ZERO;
         for (OrderItemDTO orderItemDTO : orderItemsDTO) {
-            beforeDiscountForPromotion
-                    += orderItemDTO.getOrderedPromotionQuantity() * orderItemDTO.getPricePerProduct();
+            if (orderItemDTO.getFreeQuantity() != ZERO) {
+                beforeDiscountForPromotion
+                        += (orderItemDTO.getTotalQuantity() * orderItemDTO.getPricePerProduct());
+            }
         }
         double afterDiscountForPromotion = totalPrice - beforeDiscountForPromotion;
-        return ratioDiscount.getDiscountPrice(afterDiscountForPromotion);
+        return ratioDiscount.calculateDiscountPrice(afterDiscountForPromotion);
     }
 
     private double calculateMoneyForPay() {

@@ -9,6 +9,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class Products implements Iterable<Product> {
+    private static final int ZERO = 0;
+    private static final int EMPTY = 0;
+    private static final int INITIAL_VALUE = 0;
+    private static final int ONLY_ONE = 1;
+
     private final List<Product> products;
 
     public Products(List<Product> products) {
@@ -16,7 +21,7 @@ public class Products implements Iterable<Product> {
     }
 
     public boolean onlyHasOnPromotion(Product product) {
-        return Collections.frequency(products, product) == 1 && product.onPromotion();
+        return Collections.frequency(products, product) == ONLY_ONE && product.onPromotion();
     }
 
     public boolean contains(String productName) {
@@ -24,11 +29,24 @@ public class Products implements Iterable<Product> {
     }
 
     public boolean isAvailablePurchase(String productName, int orderQuantity) {
-        int totalQuantity = products.stream()
-                .filter(product -> product.exist(productName))
-                .mapToInt(Product::getStock)
-                .sum();
+        int totalQuantity = products.stream().filter(product -> product.exist(productName))
+                .mapToInt(Product::getStock).sum();
+
         return totalQuantity >= orderQuantity;
+    }
+
+    public boolean isEmptyPromotionStock(int orderedPromotionAndFreeQuantity) {
+        int promotionStock = products.stream().filter(Product::onPromotion)
+                .mapToInt(Product::getStock).sum();
+
+        return promotionStock < orderedPromotionAndFreeQuantity;
+    }
+
+    public boolean isEmptyGeneralStock() {
+        int generalStock = products.stream().filter(product -> !product.onPromotion())
+                .mapToInt(Product::getStock).sum();
+
+        return generalStock == EMPTY;
     }
 
     public void add(Product product) {
@@ -52,41 +70,41 @@ public class Products implements Iterable<Product> {
         int remainingQuantity = reducePromotionStock(purchasedQuantities, orderQuantity);
         reduceGeneralStock(purchasedQuantities, orderQuantity, remainingQuantity);
 
-        adjustQuantitiesWhenOnlyHasGeneral(purchasedQuantities, remainingQuantity);
-        adjustQuantitiesWhenOnlHasPromotion(purchasedQuantities, remainingQuantity);
+        adjustQuantitiesWhenOnlyHasGeneralOrder(purchasedQuantities, remainingQuantity);
+        adjustQuantitiesWhenOnlHasPromotionOrder(purchasedQuantities, remainingQuantity);
 
         return purchasedQuantities;
     }
 
     private int reducePromotionStock(List<Integer> purchasedQuantities, int orderQuantity) {
         int remainingQuantity = products.getFirst().reduceStock(orderQuantity);
-        if (remainingQuantity < 0) {
+        if (remainingQuantity < ZERO) {
             purchasedQuantities.add(-remainingQuantity);
-            purchasedQuantities.add(0);
+            purchasedQuantities.add(INITIAL_VALUE);
         }
         return remainingQuantity;
     }
 
     private void reduceGeneralStock(List<Integer> purchasedQuantities, int orderQuantity, int remainingQuantity) {
-        if (remainingQuantity >= 0) {
+        if (remainingQuantity >= ZERO) {
             purchasedQuantities.add(orderQuantity - remainingQuantity);
             remainingQuantity = products.getLast().reduceStock(remainingQuantity);
             purchasedQuantities.add(-remainingQuantity);
         }
     }
 
-    private void adjustQuantitiesWhenOnlyHasGeneral(List<Integer> purchasedQuantities, int remainingQuantity) {
-        if (products.size() == 1) {
+    private void adjustQuantitiesWhenOnlyHasGeneralOrder(List<Integer> purchasedQuantities, int remainingQuantity) {
+        if (products.size() == ONLY_ONE) {
             purchasedQuantities.removeFirst();
             purchasedQuantities.add(-remainingQuantity);
         }
     }
 
-    private void adjustQuantitiesWhenOnlHasPromotion(List<Integer> purchasedQuantities, int remainingQuantity) {
+    private void adjustQuantitiesWhenOnlHasPromotionOrder(List<Integer> purchasedQuantities, int remainingQuantity) {
         if (onlyHasOnPromotion(products.getFirst())) {
             purchasedQuantities.clear();
             purchasedQuantities.add(-remainingQuantity);
-            purchasedQuantities.add(0);
+            purchasedQuantities.add(INITIAL_VALUE);
         }
     }
 
@@ -103,14 +121,14 @@ public class Products implements Iterable<Product> {
     }
 
     public void resetStockForNotApplicablePromotion(String productName, int orderedPromotionQuantity,
-                                                    int orderedNotPromotionQuantity) {
+                                                    int orderedGeneralQuantity) {
         for (Product product : products) {
             if (product.exist(productName) && product.onPromotion()) {
                 product.resetStockForNotPurchase(orderedPromotionQuantity);
             }
 
             if (product.exist(productName) && !product.onPromotion()) {
-                product.resetStockForNotPurchase(orderedNotPromotionQuantity);
+                product.resetStockForNotPurchase(orderedGeneralQuantity);
             }
         }
     }

@@ -5,6 +5,7 @@ import store.dto.ProductDTO;
 import java.util.Objects;
 
 public class Product {
+    private static final int EMPTY = 0;
     private final String name;
     private final int price;
     private int stock;
@@ -32,7 +33,7 @@ public class Product {
     public int reduceStock(int orderQuantity) {
         if (onPromotion() && this.stock < orderQuantity) {
             int remainingStock = orderQuantity - this.stock;
-            this.stock = 0;
+            this.stock = EMPTY;
             return remainingStock;
         }
 

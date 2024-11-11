@@ -15,6 +15,7 @@ import store.view.OutputView;
 import java.util.List;
 
 public class StoreController {
+    private static final int ZERO = 0;
     private final InputView inputView;
     private final OutputView outputView;
     private final RetryHandler retryHandler;
@@ -66,7 +67,7 @@ public class StoreController {
     }
 
     private void checkFreeMore(OrderItemDTO orderItemDTO) {
-        if (orderItemDTO.getFreeMoreQuantity() >= orderItemDTO.getTotalQuantity()) {
+        if (orderItemDTO.getFreeMoreQuantity() != ZERO) {
             if (inputView.acceptFreeMore(orderItemDTO)) {
                 productService.reduceStockForFree(orderItemDTO.getName(), orderItemDTO.getFreeMoreQuantity());
             }
@@ -74,8 +75,7 @@ public class StoreController {
     }
 
     private void checkNotApplicablePromotion(OrderItemDTO orderItemDTO) {
-        if (orderItemDTO.getFreeMoreQuantity() != 0
-                && orderItemDTO.getTotalQuantity() > orderItemDTO.getOrderedPromotionQuantity()) {
+        if (orderItemDTO.getNotApplicablePromotionQuantity() != ZERO) {
             if (!inputView.acceptApplicabilityForPromotion(orderItemDTO)) {
                 productService.resetStockForNotApplicablePromotion(orderItemDTO.getName(),
                         orderItemDTO.getOrderedPromotionQuantity(), orderItemDTO.getOrderedNotPromotionQuantity());

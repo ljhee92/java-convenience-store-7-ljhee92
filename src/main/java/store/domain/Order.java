@@ -7,11 +7,13 @@ import store.exception.NotExistProductException;
 import java.util.List;
 
 public class Order {
+    private static final int ZERO = 0;
+    private static final int INITIAL_VALUE = 0;
     private final String name;
-    private final int quantity;
+    private int quantity;
     private final Products products;
     private final Promotion promotion;
-    private List<Integer> purchasedQuantities;
+    private List<Integer> orderedQuantities;
     private int freeMoreQuantity;
 
     public Order(String name, int quantity, Products products, Promotions promotions) {
@@ -32,66 +34,61 @@ public class Order {
 
     private void validateQuantity(Products products, String name, int quantity) {
         if (!products.isAvailablePurchase(name, quantity)) {
-            throw new InsufficientQuantityException(String.format("%s, %d", name, quantity));
+            throw new InsufficientQuantityException(String.format("%s-%d", name, quantity));
         }
     }
 
     public String getPromotionName() {
-        return products.getPromotionName();
+        return this.products.getPromotionName();
     }
 
     public void reduceStock() {
-        this.purchasedQuantities = products.reduceStock(quantity);
-
-        if (!onlyGeneralPromotion()) {
-            this.freeMoreQuantity = getFreeMore(purchasedQuantities.getFirst());
-        }
+        this.orderedQuantities = products.reduceStock(quantity);
     }
 
-    public boolean onlyGeneralPromotion() {
-        return promotion == null;
+    private boolean orderHasPromotion() {
+        return this.promotion != null;
     }
 
-    private int getFreeMore(int orderQuantity) {
-        if (orderQuantity % (promotion.getBuy() + promotion.getFree()) == 0) {
-            return 0;
+    private int calculateFreeMore(int orderedPromotionQuantity) {
+        if (orderedPromotionQuantity % (this.promotion.getBuy() + this.promotion.getFree()) == ZERO ||
+                this.products.isEmptyPromotionStock(orderedPromotionQuantity + this.promotion.getFree())) {
+            return ZERO;
         }
-        return promotion.getFree();
+
+        return this.promotion.getFree();
+    }
+
+    private int calculateNotApplicablePromotionQuantity(int orderedPromotionQuantity, int orderedGeneralQuantity) {
+        return (orderedPromotionQuantity + freeMoreQuantity)
+                % (this.promotion.getBuy() + this.promotion.getFree())
+                + orderedGeneralQuantity;
+    }
+
+    private int calculateFreeQuantity(int orderedPromotionQuantity) {
+        return (orderedPromotionQuantity + this.promotion.getFree())
+                / (this.promotion.getBuy() + this.promotion.getFree());
     }
 
     public OrderItemDTO toDTO() {
-        int totalQuantity = quantity;
-        int pricePerProduct = products.getPricePerProduct();
-        int orderedPromotionQuantity = purchasedQuantities.getFirst();
-        int orderedNotPromotionQuantity = purchasedQuantities.getLast();
-        int notApplicablePromotionQuantity = 0;
-        int freeQuantity = 0;
-        if (promotion != null) {
-            if (promotion.getBuy() == 2) {
-                notApplicablePromotionQuantity
-                        = orderedPromotionQuantity % (promotion.getBuy() + promotion.getFree())
-                        + orderedNotPromotionQuantity;
+        int orderedPromotionQuantity = orderedQuantities.getFirst();
+        int orderedGeneralQuantity = orderedQuantities.getLast();
+        int notApplicablePromotionQuantity = INITIAL_VALUE;
+        int freeQuantity = INITIAL_VALUE;
 
-                if (orderedPromotionQuantity == 2) {
-                    notApplicablePromotionQuantity
-                            = orderedNotPromotionQuantity;
-                }
-            }
-
-            if (promotion.getBuy() == 1) {
-                notApplicablePromotionQuantity = orderedPromotionQuantity;
-                totalQuantity += orderedPromotionQuantity;
-            }
-
-            freeQuantity = orderedPromotionQuantity / (promotion.getBuy() + promotion.getFree());
-
-            if (products.size() == 1) {
-                freeQuantity =1;
-            }
+        if (orderHasPromotion()) {
+            this.freeMoreQuantity = calculateFreeMore(orderedPromotionQuantity);
+            notApplicablePromotionQuantity
+                    = calculateNotApplicablePromotionQuantity(orderedPromotionQuantity, orderedGeneralQuantity);
+            freeQuantity = calculateFreeQuantity(orderedPromotionQuantity);
         }
 
-        return new OrderItemDTO(name, totalQuantity, pricePerProduct, orderedPromotionQuantity,
-                orderedNotPromotionQuantity, freeMoreQuantity, notApplicablePromotionQuantity, freeQuantity);
+        if (products.isEmptyGeneralStock()) {
+            this.quantity += freeQuantity;
+        }
+
+        return new OrderItemDTO(this.name, this.quantity, products.getPricePerProduct(), orderedPromotionQuantity,
+                orderedGeneralQuantity, this.freeMoreQuantity, notApplicablePromotionQuantity, freeQuantity);
     }
 
     @Override
