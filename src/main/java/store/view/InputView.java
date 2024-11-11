@@ -2,7 +2,7 @@ package store.view;
 
 import store.dto.OrderItemDTO;
 import store.exception.InvalidInputException;
-import store.exception.ProductFormatException;
+import store.exception.InvalidProductFormatException;
 import store.util.OutputWriter;
 import store.util.Parser;
 import store.util.UserInputReader;
@@ -27,11 +27,11 @@ public class InputView implements UserInputReader, OutputWriter {
 
     private void validateOrderFormat(String inputOrder) {
         if (inputOrder.isBlank()) {
-            throw new ProductFormatException(inputOrder);
+            throw new InvalidProductFormatException(inputOrder);
         }
 
         if (!INPUT_ORDER_FORMAT.matcher(inputOrder).matches()) {
-            throw new ProductFormatException(inputOrder);
+            throw new InvalidProductFormatException(inputOrder);
         }
     }
 

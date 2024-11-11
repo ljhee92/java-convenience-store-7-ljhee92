@@ -1,13 +1,11 @@
 package store.exception;
 
 public class InvalidInputException extends IllegalArgumentException {
-    private static final String ERROR_MESSAGE = "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.";
-
     public InvalidInputException(String message) {
-        super(ERROR_MESSAGE + "(잘못된 입력 : " + message + ")");
+        super(ErrorMessage.INVALID_INPUT_EXCEPTION.getMessage() + " (잘못된 입력 : " + message + ")");
     }
 
     public InvalidInputException(String message, Exception e) {
-        super(ERROR_MESSAGE + "(잘못된 입력 : " + message + ")", e);
+        super(ErrorMessage.INVALID_INPUT_EXCEPTION.getMessage() + " (잘못된 입력 : " + message + ")", e);
     }
 }

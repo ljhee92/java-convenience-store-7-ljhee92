@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import store.exception.ProductFormatException;
+import store.exception.InvalidProductFormatException;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class InputViewTest extends NsTest {
         run(input);
         assertThatThrownBy(() -> {
             inputView.requestOrder();
-        }).isInstanceOf(ProductFormatException.class);
+        }).isInstanceOf(InvalidProductFormatException.class);
     }
 
     @Override
