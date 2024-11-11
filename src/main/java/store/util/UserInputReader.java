@@ -2,8 +2,8 @@ package store.util;
 
 import camp.nextstep.edu.missionutils.Console;
 
-public class UserInputReader {
-    protected String inputMessage() {
+public interface UserInputReader {
+    default String inputMessage() {
         return Console.readLine();
     }
 }
