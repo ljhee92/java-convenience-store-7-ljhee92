@@ -1,5 +1,7 @@
 package store.util;
 
+import store.exception.FileReadException;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -16,7 +18,7 @@ public class FileInputReader {
             closeReader(bufferedReader, fileReader);
             return contentsByLine;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileReadException(filePath, e);
         }
     }
 

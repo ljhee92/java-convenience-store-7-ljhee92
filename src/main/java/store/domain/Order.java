@@ -32,7 +32,7 @@ public class Order {
 
     private void validateQuantity(Products products, String name, int quantity) {
         if (!products.isAvailablePurchase(name, quantity)) {
-            throw new InsufficientQuantityException(String.format("%s,%d", name, quantity));
+            throw new InsufficientQuantityException(String.format("%s, %d", name, quantity));
         }
     }
 
