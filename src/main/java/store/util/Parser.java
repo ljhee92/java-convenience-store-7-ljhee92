@@ -1,5 +1,7 @@
 package store.util;
 
+import store.exception.InvalidInputException;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class Parser {
         try {
             return Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException();
+            throw new InvalidInputException(input, e);
         }
     }
 }

@@ -6,4 +6,8 @@ public class InvalidInputException extends IllegalArgumentException {
     public InvalidInputException(String message) {
         super(ERROR_MESSAGE + "(잘못된 입력 : " + message + ")");
     }
+
+    public InvalidInputException(String message, Exception e) {
+        super(ERROR_MESSAGE + "(잘못된 입력 : " + message + ")", e);
+    }
 }
