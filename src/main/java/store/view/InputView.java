@@ -20,7 +20,7 @@ public class InputView implements InputReader, OutputWriter {
             throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
         }
 
-        if (!order.matches("^(\\[[가-힣]+-[0-9]+])+,*(\\[[가-힣]+-[0-9]+])*$")) {
+        if (!order.matches("^(\\[[가-힣]+-[0-9]+])(,(\\[[가-힣]+-[0-9]+]))*$")) {
             throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
         }
     }

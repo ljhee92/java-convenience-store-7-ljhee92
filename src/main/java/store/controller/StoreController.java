@@ -1,14 +1,10 @@
 package store.controller;
 
-import store.domain.Inventory;
 import store.domain.Orders;
-import store.domain.Products;
-import store.domain.Promotion;
+import store.service.StoreService;
 import store.dto.ProductResponse;
-import store.service.InventoryService;
 import store.service.OrderService;
-import store.service.ProductService;
-import store.service.PromotionService;
+import store.util.RetryHandler;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -17,30 +13,29 @@ import java.util.List;
 public class StoreController {
     private final InputView inputView;
     private final OutputView outputView;
-    private final ProductService productService;
-    private final PromotionService promotionService;
+    private final StoreService storeService;
+    private final OrderService orderService;
 
     public StoreController(InputView inputView, OutputView outputView,
-                           ProductService productService, PromotionService promotionService) {
+                           StoreService storeService, OrderService orderService) {
         this.inputView = inputView;
         this.outputView = outputView;
-        this.productService = productService;
-        this.promotionService = promotionService;
+        this.storeService = storeService;
+        this.orderService = orderService;
     }
 
     public void run() {
-        Inventory inventory = initInventory();
-        displayProducts(inventory);
+        displayProducts();
+        RetryHandler.repeat(this::requestOrder);
     }
 
-    private Inventory initInventory() {
-        Products products = productService.getProductsForPurchase();
-        List<Promotion> promotions = promotionService.getAllPromotions();
-        return Inventory.of(products, promotions);
-    }
-
-    private void displayProducts(Inventory inventory) {
-        List<ProductResponse> productResponses = new InventoryService(inventory).getProductResponses();
+    private void displayProducts() {
+        List<ProductResponse> productResponses = storeService.getProductResponses();
         outputView.displayProductsForPurchase(productResponses);
+    }
+
+    private void requestOrder() {
+        List<String> inputOrders = inputView.requestOrder();
+        Orders orders = orderService.createOrders(inputOrders);
     }
 }

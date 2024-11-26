@@ -27,7 +27,12 @@ public class Products implements Iterable<Product> {
     }
 
     public boolean hasProduct(String productName) {
-        return products.stream().anyMatch(product -> product.getName().equals(productName));
+        return products.stream().anyMatch(product -> productName.equals(product.getName()));
+    }
+
+    public boolean notEnoughStock(String productName, int quantity) {
+        return products.stream().filter(product -> productName.equals(product.getName()))
+                .mapToInt(Product::getQuantity).sum() < quantity;
     }
 
     @Override

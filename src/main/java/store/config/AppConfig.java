@@ -3,17 +3,15 @@ package store.config;
 import store.controller.StoreController;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
-import store.service.InventoryService;
 import store.service.OrderService;
-import store.service.ProductService;
-import store.service.PromotionService;
+import store.service.StoreService;
 import store.view.InputView;
 import store.view.OutputView;
 
 public class AppConfig {
     public StoreController storeController() {
         return new StoreController(inputView(), outputView(),
-                productService(), promotionService());
+                storeService(), orderService());
     }
 
     private InputView inputView() {
@@ -28,15 +26,15 @@ public class AppConfig {
         return new ProductRepository();
     }
 
-    private ProductService productService() {
-        return new ProductService(productRepository());
-    }
-
     private PromotionRepository promotionRepository() {
         return new PromotionRepository();
     }
 
-    private PromotionService promotionService() {
-        return new PromotionService(promotionRepository());
+    private StoreService storeService() {
+        return new StoreService(productRepository(), promotionRepository());
+    }
+
+    private OrderService orderService() {
+        return new OrderService(storeService());
     }
 }
