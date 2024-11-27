@@ -1,5 +1,6 @@
 package store.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,6 +34,23 @@ public class Products implements Iterable<Product> {
     public boolean notEnoughStock(String productName, int quantity) {
         return products.stream().filter(product -> productName.equals(product.getName()))
                 .mapToInt(Product::getQuantity).sum() < quantity;
+    }
+
+    public boolean enoughPromotionStock(String productName, int quantity) {
+        return products.stream().filter(product -> productName.equals(product.getName()))
+                .filter(Product::onPromotion)
+                .mapToInt(Product::getQuantity).sum() > quantity;
+    }
+
+    public String getPromotionName(String productName) {
+        return products.stream().filter(product -> productName.equals(product.getName()))
+                .filter(Product::onPromotion)
+                .map(Product::getPromotion).findFirst().orElse(null);
+    }
+
+    public BigDecimal getProductPrice(String productName) {
+        return products.stream().filter(product -> productName.equals(product.getName()))
+                .map(Product::getPrice).findFirst().orElse(null);
     }
 
     @Override

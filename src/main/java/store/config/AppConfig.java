@@ -3,15 +3,13 @@ package store.config;
 import store.controller.StoreController;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
-import store.service.OrderService;
 import store.service.StoreService;
 import store.view.InputView;
 import store.view.OutputView;
 
 public class AppConfig {
     public StoreController storeController() {
-        return new StoreController(inputView(), outputView(),
-                storeService(), orderService());
+        return new StoreController(inputView(), outputView(), storeService());
     }
 
     private InputView inputView() {
@@ -32,9 +30,5 @@ public class AppConfig {
 
     private StoreService storeService() {
         return new StoreService(productRepository(), promotionRepository());
-    }
-
-    private OrderService orderService() {
-        return new OrderService(storeService());
     }
 }

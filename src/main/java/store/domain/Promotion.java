@@ -1,7 +1,8 @@
 package store.domain;
 
+import camp.nextstep.edu.missionutils.DateTimes;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Promotion {
     private final String name;
@@ -22,24 +23,21 @@ public class Promotion {
         return new Promotion(name, buy, free, startDate, endDate);
     }
 
+    public boolean inPromotionPeriod() {
+        return DateTimes.now().toLocalDate().isBefore(endDate) && DateTimes.now().toLocalDate().isAfter(startDate);
+    }
+
+    public int getFreeMore(int quantity) {
+        int remaining = quantity % (buy + free);
+        int freeMore = 0;
+        if (remaining >= buy) {
+            freeMore = free;
+        }
+        return freeMore;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public int getBuy() {
-        return buy;
-    }
-
-    public int getFree() {
-        return free;
-    }
-
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return endDate;
     }
 
     @Override

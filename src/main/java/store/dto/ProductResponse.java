@@ -16,24 +16,4 @@ public record ProductResponse(
                 product.getQuantity(), product.getPromotion()
         );
     }
-
-    @Override
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public BigDecimal price() {
-        return price;
-    }
-
-    @Override
-    public int quantity() {
-        return quantity;
-    }
-
-    @Override
-    public String promotion() {
-        return promotion;
-    }
 }

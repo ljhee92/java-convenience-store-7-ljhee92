@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PromotionRepository {
-    private final String PROMOTION_PATTERN = "^([a-zA-Z가-힣+]+),([0-9]+),([0-9]+),([0-9-]+),([0-9-]+)$";
+    private final String PROMOTION_PATTERN = "^([a-zA-Z가-힣0-9+]+),([0-9]+),([0-9]+),([0-9-]+),([0-9-]+)$";
     private final Pattern pattern = Pattern.compile(PROMOTION_PATTERN);
     private final int PROMOTION_NAME = 1;
     private final int PROMOTION_BUY = 2;
