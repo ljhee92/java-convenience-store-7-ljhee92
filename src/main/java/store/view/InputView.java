@@ -48,6 +48,13 @@ public class InputView implements InputReader, OutputWriter {
         return answer;
     }
 
+    public String requestApplyMembership() {
+        displayMessage("멤버십 할인을 받으시겠습니까? (Y/N)");
+        String answer = Console.readLine();
+        validateYorN(answer);
+        return answer;
+    }
+
     private void validateYorN(String answer) {
         if (answer.isBlank()) {
             throw new IllegalArgumentException("[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.");

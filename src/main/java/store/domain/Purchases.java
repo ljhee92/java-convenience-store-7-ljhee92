@@ -23,9 +23,9 @@ public class Purchases implements Iterable<Purchase> {
         });
     }
 
-    public void minusNotApplicableItems(int notApplicableQuantity) {
+    public void updateNotApplicableItems(int notApplicableQuantity) {
         purchases.forEach(purchase -> {
-            purchase.minusNotApplicableQuantity(notApplicableQuantity);
+            purchase.updateNotApplicableQuantity(notApplicableQuantity);
         });
     }
 

@@ -1,5 +1,7 @@
 package store.controller;
 
+import store.domain.Calculator;
+import store.domain.Membership;
 import store.domain.Order;
 import store.domain.Orders;
 import store.domain.Purchases;
@@ -13,6 +15,7 @@ import store.util.RetryHandler;
 import store.view.InputView;
 import store.view.OutputView;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class StoreController {
         Purchases purchases = store.createPurchases(orders);
         RetryHandler.repeat(() -> requestFreeMore(store, purchases));
         RetryHandler.repeat(() -> requestNotApplicable(store, purchases));
+        RetryHandler.repeat(() -> requestApplyMembership(purchases));
     }
 
     private void displayProducts(Store store) {
@@ -92,8 +96,17 @@ public class StoreController {
     private void minusNotApplicable(Purchases purchases, String answer, List<NotApplicableItem> notApplicableItems) {
         if (RequestStatus.NO.getRequestValue().equals(answer)) {
             for (NotApplicableItem notApplicableItem : notApplicableItems) {
-                purchases.minusNotApplicableItems(notApplicableItem.quantity());
+                purchases.updateNotApplicableItems(notApplicableItem.quantity());
             }
+        }
+    }
+
+    private void requestApplyMembership(Purchases purchases) {
+        String answer = inputView.requestApplyMembership();
+        Calculator calculator = Calculator.of(purchases, new Membership());
+
+        if (RequestStatus.YES.getRequestValue().equals(answer)) {
+            calculator.calculateMembershipDiscountAmount();
         }
     }
 }

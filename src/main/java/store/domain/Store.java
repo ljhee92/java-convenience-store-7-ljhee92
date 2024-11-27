@@ -49,6 +49,9 @@ public class Store {
             int quantity = order.getQuantity();
 
             Purchase purchase = Purchase.of(name, quantity, products.getProductPrice(name));
+            if (products.onPromotion(name)) {
+                purchase = Purchase.ofOnPromotion(name, quantity, products.getProductPrice(name));
+            }
             purchases.add(purchase);
         }
         return Purchases.from(purchases);
