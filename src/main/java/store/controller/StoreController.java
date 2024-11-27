@@ -2,10 +2,10 @@ package store.controller;
 
 import store.domain.Order;
 import store.domain.Orders;
-import store.domain.Purchase;
 import store.domain.Purchases;
 import store.domain.Store;
 import store.dto.FreeMoreItem;
+import store.dto.NotApplicableItem;
 import store.service.StoreService;
 import store.dto.ProductResponse;
 import store.util.RequestStatus;
@@ -33,6 +33,7 @@ public class StoreController {
         Orders orders = RetryHandler.repeat(() -> getOrders(store));
         Purchases purchases = store.createPurchases(orders);
         RetryHandler.repeat(() -> requestFreeMore(store, purchases));
+        RetryHandler.repeat(() -> requestNotApplicable(store, purchases));
     }
 
     private void displayProducts(Store store) {
@@ -66,10 +67,32 @@ public class StoreController {
                 answer = inputView.requestFreeMore(freeMoreItem);
             }
         }
+        addFreeMore(purchases, answer, freeMoreItems);
+    }
 
+    private void addFreeMore(Purchases purchases, String answer, List<FreeMoreItem> freeMoreItems) {
         if (RequestStatus.YES.getRequestValue().equals(answer)) {
             for (FreeMoreItem freeMoreItem : freeMoreItems) {
                 purchases.addFreeMoreItems(freeMoreItem.quantity());
+            }
+        }
+    }
+
+    private void requestNotApplicable(Store store, Purchases purchases) {
+        String answer = "";
+        List<NotApplicableItem> notApplicableItems = store.getNotApplicableItems(purchases);
+        for (NotApplicableItem notApplicableItem : notApplicableItems) {
+            if (notApplicableItem.quantity() != 0) {
+                answer = inputView.requestNotApplicable(notApplicableItem);
+            }
+        }
+        minusNotApplicable(purchases, answer, notApplicableItems);
+    }
+
+    private void minusNotApplicable(Purchases purchases, String answer, List<NotApplicableItem> notApplicableItems) {
+        if (RequestStatus.NO.getRequestValue().equals(answer)) {
+            for (NotApplicableItem notApplicableItem : notApplicableItems) {
+                purchases.minusNotApplicableItems(notApplicableItem.quantity());
             }
         }
     }

@@ -23,6 +23,12 @@ public class Purchases implements Iterable<Purchase> {
         });
     }
 
+    public void minusNotApplicableItems(int notApplicableQuantity) {
+        purchases.forEach(purchase -> {
+            purchase.minusNotApplicableQuantity(notApplicableQuantity);
+        });
+    }
+
     @Override
     public Iterator<Purchase> iterator() {
         return purchases.iterator();

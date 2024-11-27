@@ -36,6 +36,10 @@ public class Promotion {
         return freeMore;
     }
 
+    public int getNotApplicable(int quantity) {
+        return quantity % (buy + free);
+    }
+
     public String getName() {
         return name;
     }

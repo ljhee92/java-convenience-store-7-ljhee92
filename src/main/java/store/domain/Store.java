@@ -1,9 +1,10 @@
 package store.domain;
 
+import org.assertj.core.condition.Not;
 import store.dto.FreeMoreItem;
+import store.dto.NotApplicableItem;
 import store.dto.ProductResponse;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +59,12 @@ public class Store {
         for (Purchase purchase : purchases) {
             String name = purchase.getName();
             int quantity = purchase.getBuyQuantity();
-
             String promotionName = products.getPromotionName(name);
-            Promotion promotion = promotions.getPromotion(promotionName);
-            FreeMoreItem freeMoreItem = new FreeMoreItem(name, calculateFreeQuantity(name, quantity, promotion));
-            freeMoreItems.add(freeMoreItem);
+            if (promotionName != null) {
+                Promotion promotion = promotions.getPromotion(promotionName);
+                FreeMoreItem freeMoreItem = new FreeMoreItem(name, calculateFreeQuantity(name, quantity, promotion));
+                freeMoreItems.add(freeMoreItem);
+            }
         }
         return freeMoreItems;
     }
@@ -73,5 +75,30 @@ public class Store {
             freeQuantity = promotion.getFreeMore(quantity);
         }
         return freeQuantity;
+    }
+
+    public List<NotApplicableItem> getNotApplicableItems(Purchases purchases) {
+        List<NotApplicableItem> notApplicableItems = new ArrayList<>();
+        for (Purchase purchase : purchases) {
+            String name = purchase.getName();
+            int quantity = purchase.getBuyQuantity();
+            String promotionName = products.getPromotionName(name);
+            if (promotionName != null) {
+                Promotion promotion = promotions.getPromotion(promotionName);
+                int promotionStock = products.getProductQuantity(name);
+                NotApplicableItem notApplicableItem = new NotApplicableItem(name,
+                        calculateNotApplicableQuantity(name, quantity, promotionStock, promotion));
+                notApplicableItems.add(notApplicableItem);
+            }
+        }
+        return notApplicableItems;
+    }
+
+    private int calculateNotApplicableQuantity(String name, int quantity, int promotionStock, Promotion promotion) {
+        int notApplicableQuantity = 0;
+        if (!products.enoughPromotionStock(name, quantity)) {
+            notApplicableQuantity = promotion.getNotApplicable(promotionStock) + (quantity - promotionStock);
+        }
+        return notApplicableQuantity;
     }
 }

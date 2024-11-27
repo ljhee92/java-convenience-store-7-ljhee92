@@ -53,6 +53,11 @@ public class Products implements Iterable<Product> {
                 .map(Product::getPrice).findFirst().orElse(null);
     }
 
+    public int getProductQuantity(String productName) {
+        return products.stream().filter(product -> productName.equals(product.getName()))
+                .map(Product::getQuantity).findFirst().orElse(0);
+    }
+
     @Override
     public Iterator<Product> iterator() {
         return products.iterator();

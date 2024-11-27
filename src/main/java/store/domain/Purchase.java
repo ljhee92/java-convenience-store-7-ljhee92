@@ -23,6 +23,10 @@ public class Purchase {
         this.freeQuantity += freeQuantity;
     }
 
+    public void minusNotApplicableQuantity(int notApplicableQuantity) {
+        this.buyQuantity -= notApplicableQuantity;
+    }
+
     public String getName() {
         return name;
     }
