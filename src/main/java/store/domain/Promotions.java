@@ -17,6 +17,12 @@ public class Promotions implements Iterable<Promotion> {
         return new Promotions(promotions);
     }
 
+    public boolean inPromotionPeriod(String promotionName) {
+        return promotions.stream()
+                .filter(promotion -> promotionName.equals(promotion.getName()))
+                .anyMatch(Promotion::inPromotionPeriod);
+    }
+
     public Promotion getPromotion(String promotionName) {
         return promotions.stream()
                 .filter(promotion -> promotionName.equals(promotion.getName()))

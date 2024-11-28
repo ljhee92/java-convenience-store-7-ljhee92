@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Product {
     private final String name;
     private final BigDecimal price;
-    private final int quantity;
+    private int quantity;
     private final String promotion;
 
     private Product(String name, BigDecimal price, int quantity, String promotion) {
@@ -26,6 +26,10 @@ public class Product {
 
     public boolean onPromotion() {
         return !"null".equals(promotion);
+    }
+
+    public void minusQuantity(int quantity) {
+        this.quantity -= quantity;
     }
 
     public String getName() {

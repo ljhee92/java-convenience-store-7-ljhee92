@@ -5,7 +5,7 @@ public enum RequestStatus {
     NO("N")
     ;
 
-    private String requestValue;
+    private final String requestValue;
 
     RequestStatus(String requestValue) {
         this.requestValue = requestValue;

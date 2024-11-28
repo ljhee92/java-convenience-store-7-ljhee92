@@ -33,6 +33,7 @@ public class InputView implements InputReader, OutputWriter {
     }
 
     public String requestFreeMore(FreeMoreItem freeMoreItem) {
+        displayNewLine();
         displayFormat("현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)%n",
                 freeMoreItem.name(), freeMoreItem.quantity());
         String answer = Console.readLine();
@@ -41,18 +42,28 @@ public class InputView implements InputReader, OutputWriter {
     }
 
     public String requestNotApplicable(NotApplicableItem notApplicableItem) {
+        displayNewLine();
         displayFormat("현재 %s %s개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)%n",
-                notApplicableItem.name(), notApplicableItem.quantity());
+                notApplicableItem.name(), notApplicableItem.general()+ notApplicableItem.promotion());
         String answer = Console.readLine();
         validateYorN(answer);
         return answer;
     }
 
     public String requestApplyMembership() {
+        displayNewLine();
         displayMessage("멤버십 할인을 받으시겠습니까? (Y/N)");
         String answer = Console.readLine();
         validateYorN(answer);
         return answer;
+    }
+
+    public boolean requestReOrder() {
+        displayNewLine();
+        displayMessage("감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
+        String answer = Console.readLine();
+        validateYorN(answer);
+        return RequestStatus.YES.getRequestValue().equals(answer);
     }
 
     private void validateYorN(String answer) {

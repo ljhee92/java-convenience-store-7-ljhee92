@@ -40,6 +40,10 @@ public class Promotion {
         return quantity % (buy + free);
     }
 
+    public int getFree(int quantity) {
+        return quantity / (buy + free);
+    }
+
     public String getName() {
         return name;
     }

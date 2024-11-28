@@ -8,14 +8,13 @@ import store.domain.Purchases;
 import store.domain.Store;
 import store.dto.FreeMoreItem;
 import store.dto.NotApplicableItem;
-import store.service.StoreService;
 import store.dto.ProductResponse;
+import store.service.StoreService;
 import store.util.RequestStatus;
 import store.util.RetryHandler;
 import store.view.InputView;
 import store.view.OutputView;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +22,7 @@ public class StoreController {
     private final InputView inputView;
     private final OutputView outputView;
     private final StoreService storeService;
+    private Store store;
 
     public StoreController(InputView inputView, OutputView outputView, StoreService storeService) {
         this.inputView = inputView;
@@ -31,13 +31,17 @@ public class StoreController {
     }
 
     public void run() {
-        Store store = storeService.openStore();
-        displayProducts(store);
-        Orders orders = RetryHandler.repeat(() -> getOrders(store));
-        Purchases purchases = store.createPurchases(orders);
-        RetryHandler.repeat(() -> requestFreeMore(store, purchases));
-        RetryHandler.repeat(() -> requestNotApplicable(store, purchases));
-        RetryHandler.repeat(() -> requestApplyMembership(purchases));
+        store = storeService.openStore();
+        do {
+            displayProducts(store);
+            Orders orders = RetryHandler.repeat(() -> getOrders(store));
+            Purchases purchases = store.createPurchases(orders);
+            RetryHandler.repeat(() -> requestFreeMore(store, purchases));
+            RetryHandler.repeat(() -> requestNotApplicable(store, purchases));
+            Calculator calculator = RetryHandler.repeat(() -> requestApplyMembership(purchases));
+            store = store.sell(purchases);
+            outputView.displayReceipt(calculator.issueReceipt());
+        } while (RetryHandler.repeat(inputView::requestReOrder));
     }
 
     private void displayProducts(Store store) {
@@ -86,27 +90,30 @@ public class StoreController {
         String answer = "";
         List<NotApplicableItem> notApplicableItems = store.getNotApplicableItems(purchases);
         for (NotApplicableItem notApplicableItem : notApplicableItems) {
-            if (notApplicableItem.quantity() != 0) {
+            if (notApplicableItem.general() + notApplicableItem.promotion() != 0) {
                 answer = inputView.requestNotApplicable(notApplicableItem);
             }
         }
-        minusNotApplicable(purchases, answer, notApplicableItems);
+        updateNotApplicable(purchases, answer, notApplicableItems);
     }
 
-    private void minusNotApplicable(Purchases purchases, String answer, List<NotApplicableItem> notApplicableItems) {
-        if (RequestStatus.NO.getRequestValue().equals(answer)) {
-            for (NotApplicableItem notApplicableItem : notApplicableItems) {
-                purchases.updateNotApplicableItems(notApplicableItem.quantity());
+    private void updateNotApplicable(Purchases purchases, String answer, List<NotApplicableItem> notApplicableItems) {
+        for (NotApplicableItem notApplicableItem : notApplicableItems) {
+            purchases.setNotApplicable(notApplicableItem.general() + notApplicableItem.promotion());
+            if (RequestStatus.NO.getRequestValue().equals(answer)) {
+                purchases.minusNotApplicable(notApplicableItem.general(), notApplicableItem.promotion());
             }
         }
     }
 
-    private void requestApplyMembership(Purchases purchases) {
+    private Calculator requestApplyMembership(Purchases purchases) {
         String answer = inputView.requestApplyMembership();
-        Calculator calculator = Calculator.of(purchases, new Membership());
+        Calculator calculator = Calculator.of(purchases);
 
         if (RequestStatus.YES.getRequestValue().equals(answer)) {
-            calculator.calculateMembershipDiscountAmount();
+            Membership membership = new Membership();
+            calculator = Calculator.of(purchases, membership);
         }
+        return calculator;
     }
 }

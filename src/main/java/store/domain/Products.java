@@ -58,9 +58,16 @@ public class Products implements Iterable<Product> {
                 .map(Product::getQuantity).findFirst().orElse(0);
     }
 
-    public boolean onPromotion(String productName) {
-        return products.stream().filter(product -> productName.equals(product.getName()))
-                .anyMatch(Product::onPromotion);
+    public void minusPromotionQuantity(String productName, int quantity) {
+        products.stream().filter(product -> productName.equals(product.getName()))
+                .filter(Product::onPromotion)
+                .forEach(product -> {product.minusQuantity(quantity);});
+    }
+
+    public void minusGeneralQuantity(String productName, int quantity) {
+        products.stream().filter(product -> productName.equals(product.getName()))
+                .filter(product -> !product.onPromotion())
+                .forEach(product -> {product.minusQuantity(quantity);});
     }
 
     @Override

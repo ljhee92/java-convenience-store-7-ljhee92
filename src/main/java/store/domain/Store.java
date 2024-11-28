@@ -1,6 +1,5 @@
 package store.domain;
 
-import org.assertj.core.condition.Not;
 import store.dto.FreeMoreItem;
 import store.dto.NotApplicableItem;
 import store.dto.ProductResponse;
@@ -47,10 +46,15 @@ public class Store {
         for (Order order : orders) {
             String name = order.getName();
             int quantity = order.getQuantity();
-
             Purchase purchase = Purchase.of(name, quantity, products.getProductPrice(name));
-            if (products.onPromotion(name)) {
-                purchase = Purchase.ofOnPromotion(name, quantity, products.getProductPrice(name));
+            String promotionName = products.getPromotionName(name);
+            if (promotionName != null && promotions.inPromotionPeriod(promotionName)) {
+                Promotion promotion = promotions.getPromotion(promotionName);
+                int promotionStock = products.getProductQuantity(name);
+                int promotionQuantity = Math.min(quantity,
+                        promotionStock-promotion.getNotApplicable(quantity));
+                purchase = Purchase.ofOnPromotion(name, quantity, Math.max(0, quantity-promotionStock),
+                        promotionQuantity, promotion.getFree(promotionQuantity), products.getProductPrice(name));
             }
             purchases.add(purchase);
         }
@@ -63,21 +67,21 @@ public class Store {
             String name = purchase.getName();
             int quantity = purchase.getBuyQuantity();
             String promotionName = products.getPromotionName(name);
-            if (promotionName != null) {
+            if (promotionName != null && promotions.inPromotionPeriod(promotionName)) {
                 Promotion promotion = promotions.getPromotion(promotionName);
-                FreeMoreItem freeMoreItem = new FreeMoreItem(name, calculateFreeQuantity(name, quantity, promotion));
+                FreeMoreItem freeMoreItem = new FreeMoreItem(name, calculateFreeMore(name, quantity, promotion));
                 freeMoreItems.add(freeMoreItem);
             }
         }
         return freeMoreItems;
     }
 
-    private int calculateFreeQuantity(String name, int quantity, Promotion promotion) {
-        int freeQuantity = 0;
+    private int calculateFreeMore(String name, int quantity, Promotion promotion) {
+        int freeMore = 0;
         if (products.enoughPromotionStock(name, quantity)) {
-            freeQuantity = promotion.getFreeMore(quantity);
+            freeMore = promotion.getFreeMore(quantity);
         }
-        return freeQuantity;
+        return freeMore;
     }
 
     public List<NotApplicableItem> getNotApplicableItems(Purchases purchases) {
@@ -86,22 +90,42 @@ public class Store {
             String name = purchase.getName();
             int quantity = purchase.getBuyQuantity();
             String promotionName = products.getPromotionName(name);
-            if (promotionName != null) {
+            if (promotionName != null && promotions.inPromotionPeriod(promotionName)) {
                 Promotion promotion = promotions.getPromotion(promotionName);
                 int promotionStock = products.getProductQuantity(name);
                 NotApplicableItem notApplicableItem = new NotApplicableItem(name,
-                        calculateNotApplicableQuantity(name, quantity, promotionStock, promotion));
+                        calculateNotApplicableOfGeneral(name, quantity, promotionStock),
+                        calculateNotApplicableOfPromotion(name, quantity, promotionStock, promotion));
                 notApplicableItems.add(notApplicableItem);
             }
         }
         return notApplicableItems;
     }
 
-    private int calculateNotApplicableQuantity(String name, int quantity, int promotionStock, Promotion promotion) {
+    private int calculateNotApplicableOfGeneral(String name, int quantity, int promotionStock) {
         int notApplicableQuantity = 0;
         if (!products.enoughPromotionStock(name, quantity)) {
-            notApplicableQuantity = promotion.getNotApplicable(promotionStock) + (quantity - promotionStock);
+            notApplicableQuantity = quantity - promotionStock;
         }
         return notApplicableQuantity;
+    }
+
+    private int calculateNotApplicableOfPromotion(String name, int quantity, int promotionStock, Promotion promotion) {
+        int notApplicableQuantity = 0;
+        if (!products.enoughPromotionStock(name, quantity)) {
+            notApplicableQuantity = promotion.getNotApplicable(promotionStock);
+        }
+        return notApplicableQuantity;
+    }
+
+    public Store sell(Purchases purchases) {
+        for (Purchase purchase : purchases) {
+            String name = purchase.getName();
+            products.minusGeneralQuantity(name, purchase.getGeneralQuantity());
+            if (purchase.isOnPromotion()) {
+                products.minusPromotionQuantity(name, purchase.getBuyQuantity() - purchase.getGeneralQuantity());
+            }
+        }
+        return Store.of(products, promotions);
     }
 }
