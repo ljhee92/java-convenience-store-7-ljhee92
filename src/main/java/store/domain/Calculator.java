@@ -1,5 +1,6 @@
 package store.domain;
 
+import store.domain.purchase.Purchases;
 import store.dto.Receipt;
 
 import java.math.BigDecimal;

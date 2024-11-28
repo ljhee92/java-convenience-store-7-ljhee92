@@ -1,5 +1,13 @@
 package store.domain;
 
+import store.domain.order.Order;
+import store.domain.order.Orders;
+import store.domain.product.Product;
+import store.domain.product.Products;
+import store.domain.promotion.Promotion;
+import store.domain.promotion.Promotions;
+import store.domain.purchase.Purchase;
+import store.domain.purchase.Purchases;
 import store.dto.FreeMoreItem;
 import store.dto.NotApplicableItem;
 import store.dto.ProductResponse;

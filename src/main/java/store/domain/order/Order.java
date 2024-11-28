@@ -1,4 +1,4 @@
-package store.domain;
+package store.domain.order;
 
 public class Order {
     private final String name;

@@ -2,9 +2,9 @@ package store.controller;
 
 import store.domain.Calculator;
 import store.domain.Membership;
-import store.domain.Order;
-import store.domain.Orders;
-import store.domain.Purchases;
+import store.domain.order.Order;
+import store.domain.order.Orders;
+import store.domain.purchase.Purchases;
 import store.domain.Store;
 import store.dto.FreeMoreItem;
 import store.dto.NotApplicableItem;

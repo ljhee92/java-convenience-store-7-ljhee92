@@ -1,6 +1,6 @@
 package store.repository;
 
-import store.domain.Product;
+import store.domain.product.Product;
 import store.util.ResourceReader;
 
 import java.math.BigDecimal;

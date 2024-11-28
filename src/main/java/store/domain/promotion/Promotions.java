@@ -1,4 +1,4 @@
-package store.domain;
+package store.domain.promotion;
 
 import java.util.ArrayList;
 import java.util.Iterator;

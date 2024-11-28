@@ -1,6 +1,6 @@
 package store.dto;
 
-import store.domain.Product;
+import store.domain.product.Product;
 
 import java.math.BigDecimal;
 

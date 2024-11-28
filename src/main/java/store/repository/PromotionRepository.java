@@ -1,6 +1,6 @@
 package store.repository;
 
-import store.domain.Promotion;
+import store.domain.promotion.Promotion;
 import store.util.ResourceReader;
 
 import java.time.LocalDate;

@@ -1,9 +1,9 @@
 package store.service;
 
-import store.domain.Product;
-import store.domain.Products;
-import store.domain.Promotion;
-import store.domain.Promotions;
+import store.domain.product.Product;
+import store.domain.product.Products;
+import store.domain.promotion.Promotion;
+import store.domain.promotion.Promotions;
 import store.domain.Store;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
