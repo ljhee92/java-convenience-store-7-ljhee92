@@ -1,8 +1,12 @@
 package store.controller;
 
+import store.domain.OrderItem;
+import store.domain.ProductItem;
 import store.service.StoreService;
 import store.view.InputView;
 import store.view.OutputView;
+
+import java.util.List;
 
 public class StoreController {
     private final InputView inputView;
@@ -16,6 +20,9 @@ public class StoreController {
     }
 
     public void run() {
+        List<ProductItem> productItems = storeService.getAllProducts();
+        outputView.displayProducts(productItems);
 
+        List<OrderItem> orderItems = inputView.requestOrder();
     }
 }

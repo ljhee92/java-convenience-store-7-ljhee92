@@ -24,7 +24,7 @@ public class ResourceReader {
     private static List<String> readLines(BufferedReader bufferedReader) throws IOException {
         String line = "";
         List<String> lines = new ArrayList<>();
-
+        bufferedReader.readLine();
         while ((line = bufferedReader.readLine()) != null) {
             lines.add(line);
         }
